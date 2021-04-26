@@ -2,14 +2,13 @@ const {MongoClient, ObjectID} = require('mongodb')
 const bcrypt = require('bcryptjs')
 require('dotenv').config()
 
-const url = 'mongodb://localhost:27017'
-const dbName = 'indigenousPlant'
+const url = process.env.MONGO_DB_URL
 const client = new MongoClient(url, {useUnifiedTopology: true, useNewUrlParser: true})
 
 module.exports = async function() {
   await client.connect()
 
-  const db = client.db(dbName)
+  const db = client.db()
 
   const users = db.collection('users')
   const images = db.collection('images')

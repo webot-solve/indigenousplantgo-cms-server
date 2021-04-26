@@ -46,31 +46,31 @@ const upload = multer({storage: storage})
 
 mongoDatabase().then((database) => {
   const usersRouter = makeUsersRouter({database, authorize: jwt.authorize, generateToken: jwt.generateToken})
-  app.use('/users', usersRouter)
+  app.use('/api/users', usersRouter)
 
   const pingRouter = makePingRouter({authorize: jwt.authorize})
-  app.use('/ping', pingRouter)
+  app.use('/api/ping', pingRouter)
 
   const imagesRouter = makeImagesRouter({database, authorize: jwt.authorize, verifyKey: apikey.verifyKey, upload: upload, s3: s3})
-  app.use('/images', imagesRouter)
+  app.use('/api/images', imagesRouter)
 
   const audiosRouter = makeAudiosRouter({database, authorize: jwt.authorize, verifyKey: apikey.verifyKey, upload: upload, s3: s3})
-  app.use('/audios', audiosRouter)
+  app.use('/api/audios', audiosRouter)
 
   const videosRouter = makeVideosRouter({database, authorize: jwt.authorize, verifyKey: apikey.verifyKey, upload: upload, s3: s3})
-  app.use('/videos', videosRouter)
+  app.use('/api/videos', videosRouter)
 
   const tagsRouter = makeTagsRouter({database, authorize: jwt.authorize, verifyKey: apikey.verifyKey})
-  app.use('/tags', tagsRouter)
+  app.use('/api/tags', tagsRouter)
 
   const categoriesRouter = makeCategoriesRouter({database, authorize: jwt.authorize, verifyKey: apikey.verifyKey})
-  app.use('/categories', categoriesRouter)
+  app.use('/api/categories', categoriesRouter)
 
   const locationsRouter = makeLocationsRouter({database, authorize: jwt.authorize, verifyKey: apikey.verifyKey})
-  app.use('/locations', locationsRouter)
+  app.use('/api/locations', locationsRouter)
 
   const revisionsRouter = makeRevisionsRouter({database, authorize: jwt.authorize, verifyKey: apikey.verifyKey})
-  app.use('/revisions', revisionsRouter)
+  app.use('/api/revisions', revisionsRouter)
 })
 
 const port = process.env.PORT || 8080
