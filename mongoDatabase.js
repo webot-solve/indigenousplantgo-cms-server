@@ -667,6 +667,9 @@ module.exports = async function() {
       {
         $group: {
           _id: '$_id',
+          plant_name: {$first: '$plant_name'},
+          scientific_name: {$first: '$scientific_name'},
+          description: {$first: '$description'},
           images: {$first: '$images'},
           audio_files: {$first: '$audio_files'},
           videos: {$first: '$videos'},
@@ -850,6 +853,9 @@ module.exports = async function() {
       {
         $group: {
           _id: '$_id',
+          plant_name: {$first: '$plant_name'},
+          scientific_name: {$first: '$scientific_name'},
+          description: {$first: '$description'},
           images: {$first: '$images'},
           audio_files: {$first: '$audio_files'},
           videos: {$first: '$videos'},
@@ -1027,6 +1033,8 @@ module.exports = async function() {
       {
         $group: {
           _id: '$_id',
+          waypoint_name: {$first: '$waypoint_name'},
+          description: {$first: '$description'},
           images: {$first: '$images'},
           audio_files: {$first: '$audio_files'},
           videos: {$first: '$videos'},
@@ -1221,6 +1229,8 @@ module.exports = async function() {
       {
         $group: {
           _id: '$_id',
+          waypoint_name: {$first: '$waypoint_name'},
+          description: {$first: '$description'},
           images: {$first: '$images'},
           audio_files: {$first: '$audio_files'},
           videos: {$first: '$videos'},
@@ -1403,6 +1413,8 @@ module.exports = async function() {
       {
         $group: {
           _id: '$_id',
+          tour_name: {$first: '$tour_name'},
+          description: {$first: '$description'},
           images: {$first: '$images'},
           audio_files: {$first: '$audio_files'},
           videos: {$first: '$videos'},
@@ -1599,6 +1611,8 @@ module.exports = async function() {
       {
         $group: {
           _id: '$_id',
+          tour_name: {$first: '$tour_name'},
+          description: {$first: '$description'},
           images: {$first: '$images'},
           audio_files: {$first: '$audio_files'},
           videos: {$first: '$videos'},
