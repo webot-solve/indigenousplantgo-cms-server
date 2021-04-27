@@ -1,5 +1,6 @@
 const {MongoClient, ObjectID} = require('mongodb')
 const bcrypt = require('bcryptjs')
+const e = require('express')
 require('dotenv').config()
 
 const url = process.env.MONGO_DB_URL
@@ -18,6 +19,7 @@ module.exports = async function() {
   const categories = db.collection('categories')
   const locations = db.collection('locations')
   const revisions = db.collection('revisions')
+  const plants= db.collection('plants')
 
   //Users
 
@@ -584,20 +586,303 @@ module.exports = async function() {
   }
 
   //Plant
+
+  //Get All
   //GET /api/plants
-  async function getPlants({}) {
+  async function getPlants() {
+    //Fields like images must be array of ObjectId
+    //Should convert all the ObjectId array to array of their respective item
     const aggregateOptions = [
-      {$unwind: '$images'},
       {
         $lookup: {
           from: 'images',
-          let: {'imageId': '$_id'},
-          pipline: [
-            {$match: {$expr: {$eq: ['$$imageId','$images']}}}
-          ]
+          localField: 'images',
+          foreignField: '_id',
+          as: 'images'
+        }
+      },
+      {
+        $lookup: {
+          from: 'audios',
+          localField: 'audios',
+          foreignField: '_id',
+          as: 'audios'
+        }
+      },
+      {
+        $lookup: {
+          from: 'videos',
+          localField: 'videos',
+          foreignField: '_id',
+          as: 'videos'
+        }
+      },
+      {
+        $lookup: {
+          from: 'tags',
+          localField: 'tags',
+          foreignField: '_id',
+          as: 'tags'
+        }
+      },
+      {
+        $lookup: {
+          from: 'categories',
+          localField: 'categories',
+          foreignField: '_id',
+          as: 'categories'
+        }
+      },
+      {
+        $lookup: {
+          from: 'locations',
+          localField: 'locations',
+          foreignField: '_id',
+          as: 'locations'
+        }
+      },
+      {
+        $lookup: {
+          from: 'revisions',
+          localField: 'revisions',
+          foreignField: '_id',
+          as: 'revisions'
         }
       }
     ]
+
+    return await plants.aggregate(aggregateOptions).toArray()
+  }
+
+  //Create
+  //POST /api/plants
+  async function createPlant({newPlant, user_id}) {
+    //Check required none array field first
+    if(!newPlant.plant_name) {
+      throw Error("Missing plant name")
+    }
+
+    if(!newPlant.scientific_name) {
+      throw Error("Missing scientific name")
+    }
+
+    if(!newPlant.description) {
+      throw Error("Missing description")
+    }
+
+    //Convert all passed in array of id to ObjectId
+    //Require passing in array of string
+    //Default to empty array if the field is not given
+    if(newPlant.images) {
+      newPlant.images.forEach((image, index, self) => {
+        self[index] = ObjectID(image)
+      })
+    } else {
+      newPlant.images = []
+    }
+
+    if(newPlant.audio_files) {
+      newPlant.audio_files.forEach((audio, index, self) => {
+        self[index] = ObjectID(audio)
+      })
+    } else {
+      newPlant.audio_files = []
+    }
+
+    if(newPlant.videos) {
+      newPlant.videos.forEach((video, index, self) => {
+        self[index] = ObjectID(video)
+      })
+    } else {
+      newPlant.videos = []
+    }
+
+    if(newPlant.tags) {
+      newPlant.tags.forEach((tag, index, self) => {
+        self[index] = ObjectID(tag)
+      })
+    } else {
+      newPlant.tags = []
+    }
+
+    if(newPlant.categories) {
+      newPlant.categories.forEach((category, index, self) => {
+        self[index] = ObjectID(category)
+      })
+    } else {
+      newPlant.categories = []
+    }
+
+    if(newPlant.locations) {
+      newPlant.locations.forEach((location, index, self) => {
+        self[index] = ObjectID(location)
+      })
+    } else {
+      newPlant.locations = []
+    }
+
+    if(newPlant.custom_fields) {
+      newPlant.custom_fields.forEach((custom_field, index, self) => {
+        self[index] = ObjectID(custom_field)
+      })
+    } else {
+      newPlant.custom_fields = []
+    }
+
+    //New revision for when plant is created
+    const revision = await createRevision({user_id: user_id})
+
+    newPlant.revisions = [ObjectID(revision.ops[0]._id)]
+
+    const result = await plants.insertOne({
+      ...newPlant
+    })
+    return result
+  }
+
+  //Get One
+  //GET /api/plants/:plantId
+  async function getPlant({plantId}) {
+    const aggregateOptions = [
+      {
+        $match: {
+          _id: ObjectID(plantId)
+        }
+      },
+      {
+        $lookup: {
+          from: 'images',
+          localField: 'images',
+          foreignField: '_id',
+          as: 'images'
+        }
+      },
+      {
+        $lookup: {
+          from: 'audios',
+          localField: 'audios',
+          foreignField: '_id',
+          as: 'audios'
+        }
+      },
+      {
+        $lookup: {
+          from: 'videos',
+          localField: 'videos',
+          foreignField: '_id',
+          as: 'videos'
+        }
+      },
+      {
+        $lookup: {
+          from: 'tags',
+          localField: 'tags',
+          foreignField: '_id',
+          as: 'tags'
+        }
+      },
+      {
+        $lookup: {
+          from: 'categories',
+          localField: 'categories',
+          foreignField: '_id',
+          as: 'categories'
+        }
+      },
+      {
+        $lookup: {
+          from: 'locations',
+          localField: 'locations',
+          foreignField: '_id',
+          as: 'locations'
+        }
+      },
+      {
+        $lookup: {
+          from: 'revisions',
+          localField: 'revisions',
+          foreignField: '_id',
+          as: 'revisions'
+        }
+      }
+    ]
+
+    return await plants.aggregate(aggregateOptions).next()
+  }
+
+  //Update
+  //PUT /api/plants/:plantId
+  async function updatePlant({plantId, updatedPlant, user_id}) {
+    //Convert all passed in array of id to ObjectId
+    //User should get data of the plant when they start editing
+    if(updatedPlant.images) {
+      updatedPlant.images.forEach((image, index, self) => {
+        self[index] = ObjectID(image)
+      })
+    }
+
+    if(updatedPlant.audio_files) {
+      updatedPlant.audio_files.forEach((audio, index, self) => {
+        self[index] = ObjectID(audio)
+      })
+    }
+
+    if(updatedPlant.videos) {
+      updatedPlant.videos.forEach((video, index, self) => {
+        self[index] = ObjectID(video)
+      })
+    }
+
+    if(updatedPlant.tags) {
+      updatedPlant.tags.forEach((tag, index, self) => {
+        self[index] = ObjectID(tag)
+      })
+    }
+
+    if(updatedPlant.categories) {
+      updatedPlant.categories.forEach((category, index, self) => {
+        self[index] = ObjectID(category)
+      })
+    }
+
+    if(updatedPlant.locations) {
+      updatedPlant.locations.forEach((location, index, self) => {
+        self[index] = ObjectID(location)
+      })
+    }
+
+    if(updatedPlant.custom_fields) {
+      updatedPlant.custom_fields.forEach((custom_field, index, self) => {
+        self[index] = ObjectID(custom_field)
+      })
+    }
+
+    //New revision for when plant is updated
+    const revision = await createRevision({user_id: user_id})
+
+    const plant = await plants.findOne({_id: ObjectID(plantId)})
+    updatedPlant.revisions = plant.revisions
+    updatedPlant.revisions.push(ObjectID(revision.ops[0]._id))
+
+    const result = await plants.findOneAndUpdate(
+      {_id: ObjectID(plantId)},
+      {$set: {...updatedPlant}}
+    )
+    return result
+  }
+  
+  //Delete
+  //DELETE /api/plants/:plantId
+  async function deletePlant({plantId}) {
+    const plant = await plants.findOne({_id: ObjectID(plantId)})
+    plant.revisions.forEach(async(revision) => {
+      await deleteRevision({revisionId: revision})
+    })
+
+    const result = await plants.findOneAndDelete({
+      _id: ObjectID(plantId)
+    })
+    return result
   }
 
   return {
@@ -648,6 +933,10 @@ module.exports = async function() {
     getRevision,
     deleteRevision,
     //Plant
-    getPlants
+    getPlants,
+    createPlant,
+    getPlant,
+    updatePlant,
+    deletePlant
   }
 }

@@ -1,4 +1,5 @@
 const express = require('express')
+const cors = require('cors')
 const mongoDatabase = require('./mongoDatabase')
 const jwt = require('./jwt')
 const apikey = require('./apikey')
@@ -15,9 +16,11 @@ const makeTagsRouter = require('./routers/tagsRouter')
 const makeCategoriesRouter = require('./routers/categoriesRouter')
 const makeLocationsRouter = require('./routers/locationsRouter')
 const makeRevisionsRouter = require('./routers/revisionsRouter')
+const makePlantsRouter = require('./routers/plantsRouter')
 
 const app = express()
 app.use(express.json())
+app.use(cors())
 
 const bucketName = process.env.AWS_BUCKET_NAME
 const region = process.env.AWS_BUCKET_REGION
@@ -71,6 +74,9 @@ mongoDatabase().then((database) => {
 
   const revisionsRouter = makeRevisionsRouter({database, authorize: jwt.authorize, verifyKey: apikey.verifyKey})
   app.use('/api/revisions', revisionsRouter)
+
+  const plantsRouter = makePlantsRouter({database, authorize: jwt.authorize, verifyKey: apikey.verifyKey})
+  app.use('/api/plants', plantsRouter)
 })
 
 const port = process.env.PORT || 8080
