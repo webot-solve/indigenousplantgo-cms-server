@@ -645,9 +645,9 @@ module.exports = async function() {
       {
         $lookup: {
           from: 'revisions',
-          localField: 'revisions',
+          localField: 'revision_history',
           foreignField: '_id',
-          as: 'revisions'
+          as: 'revision_history'
         }
       }
     ]
@@ -729,7 +729,7 @@ module.exports = async function() {
     //New revision for when plant is created
     const revision = await createRevision({user_id: user_id})
 
-    newPlant.revisions = [ObjectID(revision.ops[0]._id)]
+    newPlant.revision_history = [ObjectID(revision.ops[0]._id)]
 
     const result = await plants.insertOne({
       ...newPlant
@@ -797,9 +797,9 @@ module.exports = async function() {
       {
         $lookup: {
           from: 'revisions',
-          localField: 'revisions',
+          localField: 'revision_history',
           foreignField: '_id',
-          as: 'revisions'
+          as: 'revision_history'
         }
       }
     ]
@@ -852,8 +852,8 @@ module.exports = async function() {
     const revision = await createRevision({user_id: user_id})
 
     const plant = await plants.findOne({_id: ObjectID(plantId)})
-    updatedPlant.revisions = plant.revisions
-    updatedPlant.revisions.push(ObjectID(revision.ops[0]._id))
+    updatedPlant.revision_history = plant.revision_history
+    updatedPlant.revision_history.push(ObjectID(revision.ops[0]._id))
 
     const result = await plants.findOneAndUpdate(
       {_id: ObjectID(plantId)},
@@ -866,7 +866,7 @@ module.exports = async function() {
   //DELETE /api/plants/:plantId
   async function deletePlant({plantId}) {
     const plant = await plants.findOne({_id: ObjectID(plantId)})
-    plant.revisions.forEach(async(revision) => {
+    plant.revision_history.forEach(async(revision) => {
       await deleteRevision({revisionId: revision})
     })
 
@@ -935,9 +935,9 @@ module.exports = async function() {
       {
         $lookup: {
           from: 'revisions',
-          localField: 'revisions',
+          localField: 'revision_history',
           foreignField: '_id',
-          as: 'revisions'
+          as: 'revision_history'
         }
       },
       {
@@ -1029,7 +1029,7 @@ module.exports = async function() {
     //New revision for when waypoint is created
     const revision = await createRevision({user_id: user_id})
 
-    newWaypoint.revisions = [ObjectID(revision.ops[0]._id)]
+    newWaypoint.revision_history = [ObjectID(revision.ops[0]._id)]
 
     const result = await waypoints.insertOne({
       ...newWaypoint
@@ -1097,9 +1097,9 @@ module.exports = async function() {
       {
         $lookup: {
           from: 'revisions',
-          localField: 'revisions',
+          localField: 'revision_history',
           foreignField: '_id',
-          as: 'revisions'
+          as: 'revision_history'
         }
       },
       {
@@ -1164,8 +1164,8 @@ module.exports = async function() {
     const revision = await createRevision({user_id: user_id})
 
     const waypoint = await waypoints.findOne({_id: ObjectID(waypointId)})
-    updatedWaypoint.revisions = waypoint.revisions
-    updatedWaypoint.revisions.push(ObjectID(revision.ops[0]._id))
+    updatedWaypoint.revision_history = waypoint.revision_history
+    updatedWaypoint.revision_history.push(ObjectID(revision.ops[0]._id))
 
     const result = await waypoints.findOneAndUpdate(
       {_id: ObjectID(waypointId)},
@@ -1178,7 +1178,7 @@ module.exports = async function() {
   //DELETE /api/waypoints/:waypointId
   async function deleteWaypoint({waypointId}) {
     const waypoint = await waypoints.findOne({_id: ObjectID(waypointId)})
-    waypoint.revisions.forEach(async(revision) => {
+    waypoint.revision_history.forEach(async(revision) => {
       await deleteRevision({revisionId: revision})
     })
 
