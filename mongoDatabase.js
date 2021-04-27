@@ -566,7 +566,7 @@ module.exports = async function() {
     }
 
     const result = await revisions.insertOne({
-      user_id,
+      user_id: ObjectID(user_id),
       date: Date.now().toString()
     })
     return result
@@ -649,6 +649,37 @@ module.exports = async function() {
           localField: 'revision_history',
           foreignField: '_id',
           as: 'revision_history'
+        }
+      },
+      {
+        $unwind: {
+          path: '$revision_history'
+        }
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'revision_history.user',
+          foreignField: '_id',
+          as: 'revision_history.user'
+        }
+      },
+      {
+        $group: {
+          _id: '$_id',
+          images: {$first: '$images'},
+          audio_files: {$first: '$audio_files'},
+          videos: {$first: '$videos'},
+          tags: {$first: '$tags'},
+          categories: {$first: '$categories'},
+          locations: {$first: '$locations'},
+          custom_fields: {$first: '$custom_fields'},
+          revision_history: {$push: '$revision_history'}
+        }
+      },
+      {
+        $project: {
+          'revision_history.user.password': 0
         }
       }
     ]
@@ -802,6 +833,37 @@ module.exports = async function() {
           foreignField: '_id',
           as: 'revision_history'
         }
+      },
+      {
+        $unwind: {
+          path: '$revision_history'
+        }
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'revision_history.user',
+          foreignField: '_id',
+          as: 'revision_history.user'
+        }
+      },
+      {
+        $group: {
+          _id: '$_id',
+          images: {$first: '$images'},
+          audio_files: {$first: '$audio_files'},
+          videos: {$first: '$videos'},
+          tags: {$first: '$tags'},
+          categories: {$first: '$categories'},
+          locations: {$first: '$locations'},
+          custom_fields: {$first: '$custom_fields'},
+          revision_history: {$push: '$revision_history'}
+        }
+      },
+      {
+        $project: {
+          'revision_history.user.password': 0
+        }
       }
     ]
 
@@ -935,6 +997,14 @@ module.exports = async function() {
       },
       {
         $lookup: {
+          from: 'plants',
+          localField: 'plants',
+          foreignField: '_id',
+          as: 'plants'
+        }
+      },
+      {
+        $lookup: {
           from: 'revisions',
           localField: 'revision_history',
           foreignField: '_id',
@@ -942,11 +1012,35 @@ module.exports = async function() {
         }
       },
       {
+        $unwind: {
+          path: '$revision_history'
+        }
+      },
+      {
         $lookup: {
-          from: 'plants',
-          localField: 'plants',
+          from: 'users',
+          localField: 'revision_history.user',
           foreignField: '_id',
-          as: 'plants'
+          as: 'revision_history.user'
+        }
+      },
+      {
+        $group: {
+          _id: '$_id',
+          images: {$first: '$images'},
+          audio_files: {$first: '$audio_files'},
+          videos: {$first: '$videos'},
+          tags: {$first: '$tags'},
+          categories: {$first: '$categories'},
+          location: {$first: '$location'},
+          plants: {$first: '$plants'},
+          custom_fields: {$first: '$custom_fields'},
+          revision_history: {$push: '$revision_history'}
+        }
+      },
+      {
+        $project: {
+          'revision_history.user.password': 0
         }
       }
     ]
@@ -1097,6 +1191,14 @@ module.exports = async function() {
       },
       {
         $lookup: {
+          from: 'plants',
+          localField: 'plants',
+          foreignField: '_id',
+          as: 'plants'
+        }
+      },
+      {
+        $lookup: {
           from: 'revisions',
           localField: 'revision_history',
           foreignField: '_id',
@@ -1104,11 +1206,35 @@ module.exports = async function() {
         }
       },
       {
+        $unwind: {
+          path: '$revision_history'
+        }
+      },
+      {
         $lookup: {
-          from: 'plants',
-          localField: 'plants',
+          from: 'users',
+          localField: 'revision_history.user',
           foreignField: '_id',
-          as: 'plants'
+          as: 'revision_history.user'
+        }
+      },
+      {
+        $group: {
+          _id: '$_id',
+          images: {$first: '$images'},
+          audio_files: {$first: '$audio_files'},
+          videos: {$first: '$videos'},
+          tags: {$first: '$tags'},
+          categories: {$first: '$categories'},
+          location: {$first: '$location'},
+          plants: {$first: '$plants'},
+          custom_fields: {$first: '$custom_fields'},
+          revision_history: {$push: '$revision_history'}
+        }
+      },
+      {
+        $project: {
+          'revision_history.user.password': 0
         }
       }
     ]
@@ -1239,14 +1365,6 @@ module.exports = async function() {
       },
       {
         $lookup: {
-          from: 'revisions',
-          localField: 'revision_history',
-          foreignField: '_id',
-          as: 'revision_history'
-        }
-      },
-      {
-        $lookup: {
           from: 'plants',
           localField: 'plants',
           foreignField: '_id',
@@ -1259,6 +1377,46 @@ module.exports = async function() {
           localField: 'waypoints',
           foreignField: '_id',
           as: 'waypoints'
+        }
+      },
+      {
+        $lookup: {
+          from: 'revisions',
+          localField: 'revision_history',
+          foreignField: '_id',
+          as: 'revision_history'
+        }
+      },
+      {
+        $unwind: {
+          path: '$revision_history'
+        }
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'revision_history.user',
+          foreignField: '_id',
+          as: 'revision_history.user'
+        }
+      },
+      {
+        $group: {
+          _id: '$_id',
+          images: {$first: '$images'},
+          audio_files: {$first: '$audio_files'},
+          videos: {$first: '$videos'},
+          tags: {$first: '$tags'},
+          categories: {$first: '$categories'},
+          plants: {$first: '$plants'},
+          waypoints: {$first: '$waypoints'},
+          custom_fields: {$first: '$custom_fields'},
+          revision_history: {$push: '$revision_history'}
+        }
+      },
+      {
+        $project: {
+          'revision_history.user.password': 0
         }
       }
     ]
@@ -1403,14 +1561,6 @@ module.exports = async function() {
       },
       {
         $lookup: {
-          from: 'revisions',
-          localField: 'revision_history',
-          foreignField: '_id',
-          as: 'revision_history'
-        }
-      },
-      {
-        $lookup: {
           from: 'plants',
           localField: 'plants',
           foreignField: '_id',
@@ -1423,6 +1573,46 @@ module.exports = async function() {
           localField: 'waypoints',
           foreignField: '_id',
           as: 'waypoints'
+        }
+      },
+      {
+        $lookup: {
+          from: 'revisions',
+          localField: 'revision_history',
+          foreignField: '_id',
+          as: 'revision_history'
+        }
+      },
+      {
+        $unwind: {
+          path: '$revision_history'
+        }
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'revision_history.user',
+          foreignField: '_id',
+          as: 'revision_history.user'
+        }
+      },
+      {
+        $group: {
+          _id: '$_id',
+          images: {$first: '$images'},
+          audio_files: {$first: '$audio_files'},
+          videos: {$first: '$videos'},
+          tags: {$first: '$tags'},
+          categories: {$first: '$categories'},
+          plants: {$first: '$plants'},
+          waypoints: {$first: '$waypoints'},
+          custom_fields: {$first: '$custom_fields'},
+          revision_history: {$push: '$revision_history'}
+        }
+      },
+      {
+        $project: {
+          'revision_history.user.password': 0
         }
       }
     ]
