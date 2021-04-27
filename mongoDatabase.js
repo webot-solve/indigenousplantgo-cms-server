@@ -21,6 +21,7 @@ module.exports = async function() {
   const revisions = db.collection('revisions')
   const plants = db.collection('plants')
   const waypoints = db.collection('waypoints')
+  const tours = db.collection('tours')
 
   //Users
 
@@ -1011,7 +1012,7 @@ module.exports = async function() {
     if(newWaypoint.location) {
       newWaypoint.location = ObjectID(newWaypoint.location)
     } else {
-      newWaypoint.location = ""
+      throw Error("Missing location")
     }
 
     if(newWaypoint.plants) {
@@ -1188,6 +1189,322 @@ module.exports = async function() {
     return result
   }
 
+  //Tour
+
+  //Get All
+  //GET /api/tours
+  async function getTours() {
+    //Fields like images must be array of ObjectId
+    //Should convert all the ObjectId array to array of their respective item
+    const aggregateOptions = [
+      {
+        $lookup: {
+          from: 'images',
+          localField: 'images',
+          foreignField: '_id',
+          as: 'images'
+        }
+      },
+      {
+        $lookup: {
+          from: 'audios',
+          localField: 'audio_files',
+          foreignField: '_id',
+          as: 'audio_files'
+        }
+      },
+      {
+        $lookup: {
+          from: 'videos',
+          localField: 'videos',
+          foreignField: '_id',
+          as: 'videos'
+        }
+      },
+      {
+        $lookup: {
+          from: 'tags',
+          localField: 'tags',
+          foreignField: '_id',
+          as: 'tags'
+        }
+      },
+      {
+        $lookup: {
+          from: 'categories',
+          localField: 'categories',
+          foreignField: '_id',
+          as: 'categories'
+        }
+      },
+      {
+        $lookup: {
+          from: 'revisions',
+          localField: 'revision_history',
+          foreignField: '_id',
+          as: 'revision_history'
+        }
+      },
+      {
+        $lookup: {
+          from: 'plants',
+          localField: 'plants',
+          foreignField: '_id',
+          as: 'plants'
+        }
+      },
+      {
+        $lookup: {
+          from: 'waypoints',
+          localField: 'waypoints',
+          foreignField: '_id',
+          as: 'waypoints'
+        }
+      }
+    ]
+
+    return await tours.aggregate(aggregateOptions).toArray()
+  }
+
+  //Create
+  //POST /api/tours
+  async function createTour({newTour, user_id}) {
+    //Check required none array field first
+    if(!newTour.tour_name) {
+      throw Error("Missing tour name")
+    }
+
+    if(!newTour.description) {
+      throw Error("Missing description")
+    }
+
+    //Convert all passed in array of id to ObjectId
+    //Require passing in array of string
+    //Default to empty array if the field is not given
+    if(newTour.images) {
+      newTour.images.forEach((image, index, self) => {
+        self[index] = ObjectID(image)
+      })
+    } else {
+      newTour.images = []
+    }
+
+    if(newTour.audio_files) {
+      newTour.audio_files.forEach((audio, index, self) => {
+        self[index] = ObjectID(audio)
+      })
+    } else {
+      newTour.audio_files = []
+    }
+
+    if(newTour.videos) {
+      newTour.videos.forEach((video, index, self) => {
+        self[index] = ObjectID(video)
+      })
+    } else {
+      newTour.videos = []
+    }
+
+    if(newTour.tags) {
+      newTour.tags.forEach((tag, index, self) => {
+        self[index] = ObjectID(tag)
+      })
+    } else {
+      newTour.tags = []
+    }
+
+    if(newTour.categories) {
+      newTour.categories.forEach((category, index, self) => {
+        self[index] = ObjectID(category)
+      })
+    } else {
+      newTour.categories = []
+    }
+
+    if(newTour.plants) {
+      newTour.plants.forEach((plant, index, self) => {
+        self[index] = ObjectID(plant)
+      })
+    } else {
+      newTour.plants = []
+    }
+
+    if(newTour.waypoints) {
+      newTour.waypoints.forEach((waypoint, index, self) => {
+        self[index] = ObjectID(waypoint)
+      })
+    } else {
+      newTour.waypoints = []
+    }
+
+    if(!newTour.custom_fields) {
+      newTour.custom_fields = []
+    }
+
+    //New revision for when tour is created
+    const revision = await createRevision({user_id: user_id})
+
+    newTour.revision_history = [ObjectID(revision.ops[0]._id)]
+
+    const result = await tours.insertOne({
+      ...newTour
+    })
+    return result
+  }
+
+  //Get One
+  //GET /api/tours/:tourId
+  async function getTour({tourId}) {
+    const aggregateOptions = [
+      {
+        $match: {
+          _id: ObjectID(tourId)
+        }
+      },
+      {
+        $lookup: {
+          from: 'images',
+          localField: 'images',
+          foreignField: '_id',
+          as: 'images'
+        }
+      },
+      {
+        $lookup: {
+          from: 'audios',
+          localField: 'audio_files',
+          foreignField: '_id',
+          as: 'audio_files'
+        }
+      },
+      {
+        $lookup: {
+          from: 'videos',
+          localField: 'videos',
+          foreignField: '_id',
+          as: 'videos'
+        }
+      },
+      {
+        $lookup: {
+          from: 'tags',
+          localField: 'tags',
+          foreignField: '_id',
+          as: 'tags'
+        }
+      },
+      {
+        $lookup: {
+          from: 'categories',
+          localField: 'categories',
+          foreignField: '_id',
+          as: 'categories'
+        }
+      },
+      {
+        $lookup: {
+          from: 'revisions',
+          localField: 'revision_history',
+          foreignField: '_id',
+          as: 'revision_history'
+        }
+      },
+      {
+        $lookup: {
+          from: 'plants',
+          localField: 'plants',
+          foreignField: '_id',
+          as: 'plants'
+        }
+      },
+      {
+        $lookup: {
+          from: 'waypoints',
+          localField: 'waypoints',
+          foreignField: '_id',
+          as: 'waypoints'
+        }
+      }
+    ]
+
+    return await tours.aggregate(aggregateOptions).next()
+  }
+
+  //Update
+  //PUT /api/tours/:tourId
+  async function updateTour({tourId, updatedTour, user_id}) {
+    //Convert all passed in array of id to ObjectId
+    //User should get data of the tour when they start editing
+    if(updatedTour.images) {
+      updatedTour.images.forEach((image, index, self) => {
+        self[index] = ObjectID(image)
+      })
+    }
+
+    if(updatedTour.audio_files) {
+      updatedTour.audio_files.forEach((audio, index, self) => {
+        self[index] = ObjectID(audio)
+      })
+    }
+
+    if(updatedTour.videos) {
+      updatedTour.videos.forEach((video, index, self) => {
+        self[index] = ObjectID(video)
+      })
+    }
+
+    if(updatedTour.tags) {
+      updatedTour.tags.forEach((tag, index, self) => {
+        self[index] = ObjectID(tag)
+      })
+    }
+
+    if(updatedTour.categories) {
+      updatedTour.categories.forEach((category, index, self) => {
+        self[index] = ObjectID(category)
+      })
+    }
+
+    if(updatedTour.plants) {
+      updatedTour.plants.forEach((plant, index, self) => {
+        self[index] = ObjectID(plant)
+      })
+    }
+
+    if(updatedTour.waypoints) {
+      updatedTour.waypoints.forEach((waypoint, index, self) => {
+        self[index] = ObjectID(waypoint)
+      })
+    }
+
+    //New revision for when tour is updated
+    const revision = await createRevision({user_id: user_id})
+
+    const tour = await tours.findOne({_id: ObjectID(tourId)})
+    updatedTour.revision_history = tour.revision_history
+    updatedTour.revision_history.push(ObjectID(revision.ops[0]._id))
+
+    const result = await tours.findOneAndUpdate(
+      {_id: ObjectID(tourId)},
+      {$set: {...updatedTour}}
+    )
+    return result
+  }
+  
+  //Delete
+  //DELETE /api/tours/:tourId
+  async function deleteTour({tourId}) {
+    const tour = await tours.findOne({_id: ObjectID(tourId)})
+    tour.revision_history.forEach(async(revision) => {
+      await deleteRevision({revisionId: revision})
+    })
+
+    const result = await tours.findOneAndDelete({
+      _id: ObjectID(tourId)
+    })
+    return result
+  }
+
   return {
     //User
     createUser,
@@ -1246,6 +1563,12 @@ module.exports = async function() {
     createWaypoint,
     getWaypoint,
     updateWaypoint,
-    deleteWaypoint
+    deleteWaypoint,
+    //Tour
+    getTours,
+    createTour,
+    getTour,
+    updateTour,
+    deleteTour
   }
 }
