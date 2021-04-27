@@ -28,10 +28,10 @@ module.exports = async function() {
   //Create new user, use for register
   //Takes in email, username and password, role default to Manager
   //POST /api/users
-  async function createUser({email, username, password, role="Manager"}) {
+  async function createUser({email, user_name, password, role="Manager"}) {
     //Check if email or username is repeating
     const user = await users.findOne({
-      $or: [{email: email}, {username: username}]
+      $or: [{email: email}, {user_name: user_name}]
     })
     if (user) {
       throw Error("Username or email is already taken")
@@ -50,7 +50,7 @@ module.exports = async function() {
 
     const result = await users.insertOne({
       email,
-      username,
+      user_name,
       password: encrypted,
       role
     })
@@ -62,9 +62,9 @@ module.exports = async function() {
   //Get One user, use for login
   //Takes in email/username and password and find one user that match
   //POST /api/users/login
-  async function getUser({username, password}) {
+  async function getUser({user_name, password}) {
     const user = await users.findOne({
-      $or: [{email: username}, {username: username}]
+      $or: [{email: user_name}, {user_name: user_name}]
     })
     if (!user) {
       throw Error("Invalid user")
@@ -82,9 +82,9 @@ module.exports = async function() {
   //Update base on userId
   //PUT /api/users/:userId
   async function updateUser({userId, updatedUser, userRole}) {
-    if (updatedUser.email || updatedUser.username) {
+    if (updatedUser.email || updatedUser.user_name) {
       const user = await users.findOne({
-        $or: [{email: updatedUser.email}, {username: updatedUser.username}]
+        $or: [{email: updatedUser.email}, {user_name: updatedUser.user_name}]
       })
       if (user) {
         if (user._id != userId) {
@@ -462,13 +462,18 @@ module.exports = async function() {
 
   //Create
   //POST /api/categories
-  async function createCategory({category_name}) {
+  async function createCategory({category_name, resource}) {
     if (!category_name) {
       throw Error("Require a category name")
     }
 
+    if (!resource) {
+      throw Error("Require a resource")
+    }
+
     const result = await categories.insertOne({
-      category_name
+      category_name,
+      resource
     })
     return result
   }
@@ -682,7 +687,8 @@ module.exports = async function() {
       },
       {
         $project: {
-          'revision_history.user.password': 0
+          'revision_history.user.password': 0,
+          'revision_history.user.role': 0
         }
       }
     ]
@@ -868,7 +874,8 @@ module.exports = async function() {
       },
       {
         $project: {
-          'revision_history.user.password': 0
+          'revision_history.user.password': 0,
+          'revision_history.user.role': 0
         }
       }
     ]
@@ -1048,7 +1055,8 @@ module.exports = async function() {
       },
       {
         $project: {
-          'revision_history.user.password': 0
+          'revision_history.user.password': 0,
+          'revision_history.user.role': 0
         }
       }
     ]
@@ -1244,7 +1252,8 @@ module.exports = async function() {
       },
       {
         $project: {
-          'revision_history.user.password': 0
+          'revision_history.user.password': 0,
+          'revision_history.user.role': 0
         }
       }
     ]
@@ -1428,7 +1437,8 @@ module.exports = async function() {
       },
       {
         $project: {
-          'revision_history.user.password': 0
+          'revision_history.user.password': 0,
+          'revision_history.user.role': 0
         }
       }
     ]
@@ -1626,7 +1636,8 @@ module.exports = async function() {
       },
       {
         $project: {
-          'revision_history.user.password': 0
+          'revision_history.user.password': 0,
+          'revision_history.user.role': 0
         }
       }
     ]
