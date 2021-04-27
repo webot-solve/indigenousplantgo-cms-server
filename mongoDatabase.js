@@ -19,7 +19,8 @@ module.exports = async function() {
   const categories = db.collection('categories')
   const locations = db.collection('locations')
   const revisions = db.collection('revisions')
-  const plants= db.collection('plants')
+  const plants = db.collection('plants')
+  const waypoints = db.collection('waypoints')
 
   //Users
 
@@ -604,9 +605,9 @@ module.exports = async function() {
       {
         $lookup: {
           from: 'audios',
-          localField: 'audios',
+          localField: 'audio_files',
           foreignField: '_id',
-          as: 'audios'
+          as: 'audio_files'
         }
       },
       {
@@ -721,11 +722,7 @@ module.exports = async function() {
       newPlant.locations = []
     }
 
-    if(newPlant.custom_fields) {
-      newPlant.custom_fields.forEach((custom_field, index, self) => {
-        self[index] = ObjectID(custom_field)
-      })
-    } else {
+    if(!newPlant.custom_fields) {
       newPlant.custom_fields = []
     }
 
@@ -760,9 +757,9 @@ module.exports = async function() {
       {
         $lookup: {
           from: 'audios',
-          localField: 'audios',
+          localField: 'audio_files',
           foreignField: '_id',
-          as: 'audios'
+          as: 'audio_files'
         }
       },
       {
@@ -851,12 +848,6 @@ module.exports = async function() {
       })
     }
 
-    if(updatedPlant.custom_fields) {
-      updatedPlant.custom_fields.forEach((custom_field, index, self) => {
-        self[index] = ObjectID(custom_field)
-      })
-    }
-
     //New revision for when plant is updated
     const revision = await createRevision({user_id: user_id})
 
@@ -881,6 +872,318 @@ module.exports = async function() {
 
     const result = await plants.findOneAndDelete({
       _id: ObjectID(plantId)
+    })
+    return result
+  }
+
+  //Waypoint
+
+  //Get All
+  //GET /api/waypoints
+  async function getWaypoints() {
+    //Fields like images must be array of ObjectId
+    //Should convert all the ObjectId array to array of their respective item
+    const aggregateOptions = [
+      {
+        $lookup: {
+          from: 'images',
+          localField: 'images',
+          foreignField: '_id',
+          as: 'images'
+        }
+      },
+      {
+        $lookup: {
+          from: 'audios',
+          localField: 'audio_files',
+          foreignField: '_id',
+          as: 'audio_files'
+        }
+      },
+      {
+        $lookup: {
+          from: 'videos',
+          localField: 'videos',
+          foreignField: '_id',
+          as: 'videos'
+        }
+      },
+      {
+        $lookup: {
+          from: 'tags',
+          localField: 'tags',
+          foreignField: '_id',
+          as: 'tags'
+        }
+      },
+      {
+        $lookup: {
+          from: 'categories',
+          localField: 'categories',
+          foreignField: '_id',
+          as: 'categories'
+        }
+      },
+      {
+        $lookup: {
+          from: 'locations',
+          localField: 'location',
+          foreignField: '_id',
+          as: 'location'
+        }
+      },
+      {
+        $lookup: {
+          from: 'revisions',
+          localField: 'revisions',
+          foreignField: '_id',
+          as: 'revisions'
+        }
+      },
+      {
+        $lookup: {
+          from: 'plants',
+          localField: 'plants',
+          foreignField: '_id',
+          as: 'plants'
+        }
+      }
+    ]
+
+    return await waypoints.aggregate(aggregateOptions).toArray()
+  }
+
+  //Create
+  //POST /api/waypoints
+  async function createWaypoint({newWaypoint, user_id}) {
+    //Check required none array field first
+    if(!newWaypoint.waypoint_name) {
+      throw Error("Missing waypoint name")
+    }
+
+    if(!newWaypoint.description) {
+      throw Error("Missing description")
+    }
+
+    //Convert all passed in array of id to ObjectId
+    //Require passing in array of string
+    //Default to empty array if the field is not given
+    if(newWaypoint.images) {
+      newWaypoint.images.forEach((image, index, self) => {
+        self[index] = ObjectID(image)
+      })
+    } else {
+      newWaypoint.images = []
+    }
+
+    if(newWaypoint.audio_files) {
+      newWaypoint.audio_files.forEach((audio, index, self) => {
+        self[index] = ObjectID(audio)
+      })
+    } else {
+      newWaypoint.audio_files = []
+    }
+
+    if(newWaypoint.videos) {
+      newWaypoint.videos.forEach((video, index, self) => {
+        self[index] = ObjectID(video)
+      })
+    } else {
+      newWaypoint.videos = []
+    }
+
+    if(newWaypoint.tags) {
+      newWaypoint.tags.forEach((tag, index, self) => {
+        self[index] = ObjectID(tag)
+      })
+    } else {
+      newWaypoint.tags = []
+    }
+
+    if(newWaypoint.categories) {
+      newWaypoint.categories.forEach((category, index, self) => {
+        self[index] = ObjectID(category)
+      })
+    } else {
+      newWaypoint.categories = []
+    }
+
+    if(newWaypoint.location) {
+      newWaypoint.location = ObjectID(newWaypoint.location)
+    } else {
+      newWaypoint.location = ""
+    }
+
+    if(newWaypoint.plants) {
+      newWaypoint.plants.forEach((plant, index, self) => {
+        self[index] = ObjectID(plant)
+      })
+    } else {
+      newWaypoint.plants = []
+    }
+
+    if(!newWaypoint.custom_fields) {
+      newWaypoint.custom_fields = []
+    }
+
+    //New revision for when waypoint is created
+    const revision = await createRevision({user_id: user_id})
+
+    newWaypoint.revisions = [ObjectID(revision.ops[0]._id)]
+
+    const result = await waypoints.insertOne({
+      ...newWaypoint
+    })
+    return result
+  }
+
+  //Get One
+  //GET /api/waypoints/:waypointId
+  async function getWaypoint({waypointId}) {
+    const aggregateOptions = [
+      {
+        $match: {
+          _id: ObjectID(waypointId)
+        }
+      },
+      {
+        $lookup: {
+          from: 'images',
+          localField: 'images',
+          foreignField: '_id',
+          as: 'images'
+        }
+      },
+      {
+        $lookup: {
+          from: 'audios',
+          localField: 'audio_files',
+          foreignField: '_id',
+          as: 'audio_files'
+        }
+      },
+      {
+        $lookup: {
+          from: 'videos',
+          localField: 'videos',
+          foreignField: '_id',
+          as: 'videos'
+        }
+      },
+      {
+        $lookup: {
+          from: 'tags',
+          localField: 'tags',
+          foreignField: '_id',
+          as: 'tags'
+        }
+      },
+      {
+        $lookup: {
+          from: 'categories',
+          localField: 'categories',
+          foreignField: '_id',
+          as: 'categories'
+        }
+      },
+      {
+        $lookup: {
+          from: 'locations',
+          localField: 'location',
+          foreignField: '_id',
+          as: 'location'
+        }
+      },
+      {
+        $lookup: {
+          from: 'revisions',
+          localField: 'revisions',
+          foreignField: '_id',
+          as: 'revisions'
+        }
+      },
+      {
+        $lookup: {
+          from: 'plants',
+          localField: 'plants',
+          foreignField: '_id',
+          as: 'plants'
+        }
+      }
+    ]
+
+    return await waypoints.aggregate(aggregateOptions).next()
+  }
+
+  //Update
+  //PUT /api/waypoints/:waypointId
+  async function updateWaypoint({waypointId, updatedWaypoint, user_id}) {
+    //Convert all passed in array of id to ObjectId
+    //User should get data of the waypoint when they start editing
+    if(updatedWaypoint.images) {
+      updatedWaypoint.images.forEach((image, index, self) => {
+        self[index] = ObjectID(image)
+      })
+    }
+
+    if(updatedWaypoint.audio_files) {
+      updatedWaypoint.audio_files.forEach((audio, index, self) => {
+        self[index] = ObjectID(audio)
+      })
+    }
+
+    if(updatedWaypoint.videos) {
+      updatedWaypoint.videos.forEach((video, index, self) => {
+        self[index] = ObjectID(video)
+      })
+    }
+
+    if(updatedWaypoint.tags) {
+      updatedWaypoint.tags.forEach((tag, index, self) => {
+        self[index] = ObjectID(tag)
+      })
+    }
+
+    if(updatedWaypoint.categories) {
+      updatedWaypoint.categories.forEach((category, index, self) => {
+        self[index] = ObjectID(category)
+      })
+    }
+
+    if(updatedWaypoint.location) {
+      updatedWaypoint.location = ObjectID(updatedWaypoint.location)
+    }
+
+    if(updatedWaypoint.plants) {
+      updatedWaypoint.plants.forEach((plant, index, self) => {
+        self[index] = ObjectID(plant)
+      })
+    }
+
+    //New revision for when waypoint is updated
+    const revision = await createRevision({user_id: user_id})
+
+    const waypoint = await waypoints.findOne({_id: ObjectID(waypointId)})
+    updatedWaypoint.revisions = waypoint.revisions
+    updatedWaypoint.revisions.push(ObjectID(revision.ops[0]._id))
+
+    const result = await waypoints.findOneAndUpdate(
+      {_id: ObjectID(waypointId)},
+      {$set: {...updatedWaypoint}}
+    )
+    return result
+  }
+  
+  //Delete
+  //DELETE /api/waypoints/:waypointId
+  async function deleteWaypoint({waypointId}) {
+    const waypoint = await waypoints.findOne({_id: ObjectID(waypointId)})
+    waypoint.revisions.forEach(async(revision) => {
+      await deleteRevision({revisionId: revision})
+    })
+
+    const result = await waypoints.findOneAndDelete({
+      _id: ObjectID(waypointId)
     })
     return result
   }
@@ -937,6 +1240,12 @@ module.exports = async function() {
     createPlant,
     getPlant,
     updatePlant,
-    deletePlant
+    deletePlant,
+    //Waypoint
+    getWaypoints,
+    createWaypoint,
+    getWaypoint,
+    updateWaypoint,
+    deleteWaypoint
   }
 }

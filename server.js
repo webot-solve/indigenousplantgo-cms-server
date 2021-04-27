@@ -17,6 +17,7 @@ const makeCategoriesRouter = require('./routers/categoriesRouter')
 const makeLocationsRouter = require('./routers/locationsRouter')
 const makeRevisionsRouter = require('./routers/revisionsRouter')
 const makePlantsRouter = require('./routers/plantsRouter')
+const makeWaypointsRouter = require('./routers/waypointsRouter')
 
 const app = express()
 app.use(express.json())
@@ -77,6 +78,9 @@ mongoDatabase().then((database) => {
 
   const plantsRouter = makePlantsRouter({database, authorize: jwt.authorize, verifyKey: apikey.verifyKey})
   app.use('/api/plants', plantsRouter)
+
+  const waypointsRouter = makeWaypointsRouter({database, authorize: jwt.authorize, verifyKey: apikey.verifyKey})
+  app.use('/api/waypoints', waypointsRouter)
 })
 
 const port = process.env.PORT || 8080
