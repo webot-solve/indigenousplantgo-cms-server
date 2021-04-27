@@ -20,7 +20,7 @@ module.exports = function({database, authorize, verifyKey}) {
   router.post('/', authorize, verifyKey, async (req, res) => {
     try {
       const result = await database.createLocation(req.body)
-      res.send("Location added")
+      res.send(result.ops[0])
     } catch (error) {
       console.error(error)
       res.status(401).send({error: error.message})

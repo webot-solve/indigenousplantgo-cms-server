@@ -1,6 +1,5 @@
 const {MongoClient, ObjectID} = require('mongodb')
 const bcrypt = require('bcryptjs')
-const e = require('express')
 require('dotenv').config()
 
 const url = process.env.MONGO_DB_URL
@@ -578,7 +577,7 @@ module.exports = async function() {
 
     const result = await revisions.insertOne({
       user_id: ObjectID(user_id),
-      date: Date.now().toString()
+      date: Date.now()
     })
     return result
   }

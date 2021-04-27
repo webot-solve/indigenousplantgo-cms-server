@@ -21,7 +21,7 @@ module.exports = function({database, authorize, verifyKey, upload, s3}) {
     try {
       const url = req.file ? req.file.location : null
       const result = await database.createVideo({url: url, updatedVideo: req.body})
-      res.send("Video added")
+      res.send(result.ops[0])
     } catch (error) {
       console.error(error)
       res.status(401).send({error: error.message})
