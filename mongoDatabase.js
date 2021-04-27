@@ -668,6 +668,11 @@ module.exports = async function() {
         }
       },
       {
+        $sort: {
+          'revision_history.date': -1
+        }
+      },
+      {
         $lookup: {
           from: 'users',
           localField: 'revision_history.user',
@@ -855,6 +860,11 @@ module.exports = async function() {
         }
       },
       {
+        $sort: {
+          'revision_history.date': -1
+        }
+      },
+      {
         $lookup: {
           from: 'users',
           localField: 'revision_history.user',
@@ -1033,6 +1043,11 @@ module.exports = async function() {
       {
         $unwind: {
           path: '$revision_history'
+        }
+      },
+      {
+        $sort: {
+          'revision_history.date': -1
         }
       },
       {
@@ -1233,6 +1248,11 @@ module.exports = async function() {
         }
       },
       {
+        $sort: {
+          'revision_history.date': -1
+        }
+      },
+      {
         $lookup: {
           from: 'users',
           localField: 'revision_history.user',
@@ -1415,6 +1435,11 @@ module.exports = async function() {
       {
         $unwind: {
           path: '$revision_history'
+        }
+      },
+      {
+        $sort: {
+          'revision_history.date': -1
         }
       },
       {
@@ -1614,6 +1639,11 @@ module.exports = async function() {
       {
         $unwind: {
           path: '$revision_history'
+        }
+      },
+      {
+        $sort: {
+          'revision_history.date': -1
         }
       },
       {
