@@ -66,5 +66,18 @@ module.exports = function({database, authorize, verifyKey}) {
     }
   })
 
+  //Get base on resource
+  //GET /api/categories/group/:group?key=<API_KEY>
+  router.get('/group/:group', verifyKey, async (req, res) => {
+    try {
+      const group = req.params.group
+      const result = await database.getCategoryGroup({group})
+      res.send(result)
+    } catch (error) {
+      console.error(error)
+      res.status(401).send({error: error.message})
+    }
+  })
+
   return router
 }

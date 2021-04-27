@@ -503,6 +503,12 @@ module.exports = async function() {
     return result
   }
 
+  //Get base on resource
+  //GET /api/categories/group/:group?key=<API_KEY>
+  async function getCategoryGroup({group}) {
+    return await categories.find({resource: group}).toArray()
+  }
+
   //Locations
   
   //Get All
@@ -1756,6 +1762,7 @@ module.exports = async function() {
     getCategory,
     updateCategory,
     deleteCategory,
+    getCategoryGroup,
     //Location
     getLocations,
     createLocation,
