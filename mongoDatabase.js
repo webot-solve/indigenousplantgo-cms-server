@@ -576,7 +576,7 @@ module.exports = async function() {
     }
 
     const result = await revisions.insertOne({
-      user_id: ObjectID(user_id),
+      user: ObjectID(user_id),
       date: Date.now()
     })
     return result
