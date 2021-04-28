@@ -518,18 +518,23 @@ module.exports = async function() {
 
   //Create
   //POST /api/locations
-  async function createLocation({location_name, coordinates, description=""}) {
+  async function createLocation({location_name, longitude, latitude, description=""}) {
     if (!location_name) {
       throw Error("Require a location name")
     }
 
-    if (!coordinates) {
-      throw Error("Require a coordinate")
+    if (!longitude) {
+      throw Error("Require a longtitude")
+    }
+
+    if (!latitude) {
+      throw Error("Require a longtitude")
     }
 
     const result = await locations.insertOne({
       location_name,
-      coordinates,
+      longitude,
+      latitude,
       description
     })
     return result

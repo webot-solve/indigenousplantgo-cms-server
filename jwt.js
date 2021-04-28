@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken')
 const secret = process.env.ACCESS_TOKEN_SECRET || "default secret"
 
 function generateToken(data) {
-  const token = jwt.sign(data, secret, {expiresIn: "1000000000000s"})
+  const token = jwt.sign(data, secret, {expiresIn: "3600s"})
   return token
 }
 exports.generateToken = generateToken
