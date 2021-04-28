@@ -21,6 +21,7 @@ module.exports = async function() {
   const plants = db.collection('plants')
   const waypoints = db.collection('waypoints')
   const tours = db.collection('tours')
+  const learn_more = db.collection('learn_more')
 
   //Users
 
@@ -1760,6 +1761,330 @@ module.exports = async function() {
     return result
   }
 
+  //Learn More
+
+  //Get All
+  //GET /api/learn_more
+  async function getLearnMores(){
+    const aggregateOptions = [
+      {
+        $lookup: {
+          from: 'images',
+          localField: 'images',
+          foreignField: '_id',
+          as: 'images'
+        }
+      },
+      {
+        $lookup: {
+          from: 'audios',
+          localField: 'audio_files',
+          foreignField: '_id',
+          as: 'audio_files'
+        }
+      },
+      {
+        $lookup: {
+          from: 'videos',
+          localField: 'videos',
+          foreignField: '_id',
+          as: 'videos'
+        }
+      },
+      {
+        $lookup: {
+          from: 'tags',
+          localField: 'tags',
+          foreignField: '_id',
+          as: 'tags'
+        }
+      },
+      {
+        $lookup: {
+          from: 'categories',
+          localField: 'categories',
+          foreignField: '_id',
+          as: 'categories'
+        }
+      },
+      {
+        $lookup: {
+          from: 'revisions',
+          localField: 'revision_history',
+          foreignField: '_id',
+          as: 'revision_history'
+        }
+      },
+      {
+        $unwind: {
+          path: '$revision_history'
+        }
+      },
+      {
+        $sort: {
+          'revision_history.date': -1
+        }
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'revision_history.user',
+          foreignField: '_id',
+          as: 'revision_history.user'
+        }
+      },
+      {
+        $group: {
+          _id: '$_id',
+          learn_more_title: {$first: '$learn_more_title'},
+          description: {$first: '$description'},
+          images: {$first: '$images'},
+          audio_files: {$first: '$audio_files'},
+          videos: {$first: '$videos'},
+          tags: {$first: '$tags'},
+          categories: {$first: '$categories'},
+          custom_fields: {$first: '$custom_fields'},
+          revision_history: {$push: '$revision_history'}
+        }
+      },
+      {
+        $project: {
+          'revision_history.user.password': 0,
+          'revision_history.user.role': 0
+        }
+      }
+    ]
+    console.log(await learn_more.find().toArray())
+    return await learn_more.aggregate(aggregateOptions).toArray()
+  }
+
+  //Create
+  //POST /api/learn_more
+  async function createLearnMore({newLearnMore, user_id}) {
+    //Check required none array field first
+    if(!newLearnMore.learn_more_title) {
+      throw Error("Missing title")
+    }
+
+    if(!newLearnMore.description) {
+      throw Error("Missing description")
+    }
+   
+    if(newLearnMore.images) {
+      newLearnMore.images.forEach((image, index, self) => {
+        self[index] = ObjectID(image)
+      })
+    } else {
+      newLearnMore.images = []
+    }
+
+    if(newLearnMore.audio_files) {
+      newLearnMore.audio_files.forEach((audio, index, self) => {
+        self[index] = ObjectID(audio)
+      })
+    } else {
+      newLearnMore.audio_files = []
+    }
+
+    if(newLearnMore.videos) {
+      newLearnMore.videos.forEach((video, index, self) => {
+        self[index] = ObjectID(video)
+      })
+    } else {
+      newLearnMore.videos = []
+    }
+
+    if(newLearnMore.tags) {
+      newLearnMore.tags.forEach((tag, index, self) => {
+        self[index] = ObjectID(tag)
+      })
+    } else {
+      newLearnMore.tags = []
+    }
+
+    if(newLearnMore.categories) {
+      newLearnMore.categories.forEach((category, index, self) => {
+        self[index] = ObjectID(category)
+      })
+    } else {
+      newLearnMore.categories = []
+    }
+
+    if(!newLearnMore.custom_fields) {
+      newLearnMore.custom_fields = []
+    }
+
+    //New revision for when learn_more is created
+    const revision = await createRevision({user_id: user_id})
+
+    newLearnMore.revision_history = [ObjectID(revision.ops[0]._id)]
+
+    const result = await learn_more.insertOne({
+      ...newLearnMore
+    })
+    return result
+  }
+
+  //Get One
+  //GET /api/learn_more/:learnMoreId
+  async function getLearnMore({learnMoreId}) {
+    const aggregateOptions = [
+      {
+        $match: {
+          _id: ObjectID(learnMoreId)
+        }
+      },
+      {
+        $lookup: {
+          from: 'images',
+          localField: 'images',
+          foreignField: '_id',
+          as: 'images'
+        }
+      },
+      {
+        $lookup: {
+          from: 'audios',
+          localField: 'audio_files',
+          foreignField: '_id',
+          as: 'audio_files'
+        }
+      },
+      {
+        $lookup: {
+          from: 'videos',
+          localField: 'videos',
+          foreignField: '_id',
+          as: 'videos'
+        }
+      },
+      {
+        $lookup: {
+          from: 'tags',
+          localField: 'tags',
+          foreignField: '_id',
+          as: 'tags'
+        }
+      },
+      {
+        $lookup: {
+          from: 'categories',
+          localField: 'categories',
+          foreignField: '_id',
+          as: 'categories'
+        }
+      },
+      {
+        $lookup: {
+          from: 'revisions',
+          localField: 'revision_history',
+          foreignField: '_id',
+          as: 'revision_history'
+        }
+      },
+      {
+        $unwind: {
+          path: '$revision_history'
+        }
+      },
+      {
+        $sort: {
+          'revision_history.date': -1
+        }
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'revision_history.user',
+          foreignField: '_id',
+          as: 'revision_history.user'
+        }
+      },
+      {
+        $group: {
+          _id: '$_id',
+          learn_more_title: {$first: '$learn_more_title'},
+          description: {$first: '$description'},
+          images: {$first: '$images'},
+          audio_files: {$first: '$audio_files'},
+          videos: {$first: '$videos'},
+          tags: {$first: '$tags'},
+          categories: {$first: '$categories'},
+          custom_fields: {$first: '$custom_fields'},
+          revision_history: {$push: '$revision_history'}
+        }
+      },
+      {
+        $project: {
+          'revision_history.user.password': 0,
+          'revision_history.user.role': 0
+        }
+      }
+    ]
+
+    return await learn_more.aggregate(aggregateOptions).next()
+  }
+
+  //Update
+  //PUT /api/learn_more/:learnMoreId
+  async function updateLearnMore({learnMoreId, updatedLearnMore, user_id}) {
+    if(updatedLearnMore.images) {
+      updatedLearnMore.images.forEach((image, index, self) => {
+        self[index] = ObjectID(image)
+      })
+    }
+
+    if(updatedLearnMore.audio_files) {
+      updatedLearnMore.audio_files.forEach((audio, index, self) => {
+        self[index] = ObjectID(audio)
+      })
+    }
+
+    if(updatedLearnMore.videos) {
+      updatedLearnMore.videos.forEach((video, index, self) => {
+        self[index] = ObjectID(video)
+      })
+    }
+
+    if(updatedLearnMore.tags) {
+      updatedLearnMore.tags.forEach((tag, index, self) => {
+        self[index] = ObjectID(tag)
+      })
+    }
+    
+    if(updatedLearnMore.categories) {
+      updatedLearnMore.categories.forEach((category, index, self) => {
+        self[index] = ObjectID(category)
+      })
+    }
+
+    const revision = await createRevision({user_id: user_id})
+    
+    const learnmore = await learn_more.findOne({_id: ObjectID(learnMoreId)})
+    updatedLearnMore.revision_history = learnmore.revision_history
+    updatedLearnMore.revision_history.push(ObjectID(revision.ops[0]._id))
+
+    const result = await learn_more.findOneAndUpdate(
+      {_id: ObjectID(learnMoreId)},
+      {$set: {...updatedLearnMore}}
+    )
+    return result
+  }
+
+  //Delete
+  //DELETE /api/learn_more/:learnMoreId
+  async function deleteLearnMore({learnMoreId}) {
+    const learnMore = await learn_more.findOne({_id: ObjectID(learnMoreId)})
+    learnMore.revision_history.forEach(async(revision) => {
+      await deleteRevision({revisionId: revision})
+    })
+
+    const result = await learn_more.findOneAndDelete({
+      _id: ObjectID(learnMoreId)
+    })
+    return result
+  }
+
   return {
     //User
     createUser,
@@ -1825,6 +2150,12 @@ module.exports = async function() {
     createTour,
     getTour,
     updateTour,
-    deleteTour
+    deleteTour,
+    //Learn More
+    getLearnMores,
+    createLearnMore,
+    getLearnMore,
+    updateLearnMore,
+    deleteLearnMore
   }
 }
