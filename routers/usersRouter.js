@@ -66,7 +66,9 @@ module.exports = function({database, authorize, generateToken, verifyKey}) {
   //PUT /api/users/:userId
   router.put('/:userId', authorize, async (req, res) => {
     try {
+      console.log(`req: ${req}`)
       const userId = req.params.userId
+      console.log(`userId ${userId}`)
       const result = await database.updateUser({userId, updatedUser: req.body, userRole: req.user.role})
       res.send("User updated")
     } catch (error) {
