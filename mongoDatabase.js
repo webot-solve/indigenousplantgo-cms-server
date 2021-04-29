@@ -577,7 +577,7 @@ module.exports = async function() {
   //Create
   //POST /api/revisions
   async function createRevision({user_id}) {
-    if(!user_id) {
+    if (!user_id) {
       throw Error("User id missing")
     }
 
@@ -717,22 +717,22 @@ module.exports = async function() {
   //POST /api/plants
   async function createPlant({newPlant, user_id}) {
     //Check required none array field first
-    if(!newPlant.plant_name) {
+    if (!newPlant.plant_name) {
       throw Error("Missing plant name")
     }
 
-    if(!newPlant.scientific_name) {
+    if (!newPlant.scientific_name) {
       throw Error("Missing scientific name")
     }
 
-    if(!newPlant.description) {
+    if (!newPlant.description) {
       throw Error("Missing description")
     }
 
     //Convert all passed in array of id to ObjectId
     //Require passing in array of string
     //Default to empty array if the field is not given
-    if(newPlant.images) {
+    if (newPlant.images) {
       newPlant.images.forEach((image, index, self) => {
         self[index] = ObjectID(image)
       })
@@ -740,7 +740,7 @@ module.exports = async function() {
       newPlant.images = []
     }
 
-    if(newPlant.audio_files) {
+    if (newPlant.audio_files) {
       newPlant.audio_files.forEach((audio, index, self) => {
         self[index] = ObjectID(audio)
       })
@@ -748,7 +748,7 @@ module.exports = async function() {
       newPlant.audio_files = []
     }
 
-    if(newPlant.videos) {
+    if (newPlant.videos) {
       newPlant.videos.forEach((video, index, self) => {
         self[index] = ObjectID(video)
       })
@@ -756,7 +756,7 @@ module.exports = async function() {
       newPlant.videos = []
     }
 
-    if(newPlant.tags) {
+    if (newPlant.tags) {
       newPlant.tags.forEach((tag, index, self) => {
         self[index] = ObjectID(tag)
       })
@@ -764,7 +764,7 @@ module.exports = async function() {
       newPlant.tags = []
     }
 
-    if(newPlant.categories) {
+    if (newPlant.categories) {
       newPlant.categories.forEach((category, index, self) => {
         self[index] = ObjectID(category)
       })
@@ -772,7 +772,7 @@ module.exports = async function() {
       newPlant.categories = []
     }
 
-    if(newPlant.locations) {
+    if (newPlant.locations) {
       newPlant.locations.forEach((location, index, self) => {
         self[index] = ObjectID(location)
       })
@@ -780,7 +780,13 @@ module.exports = async function() {
       newPlant.locations = []
     }
 
-    if(!newPlant.custom_fields) {
+    if (newPlant.custom_fields) {
+      newPlant.custom_fields.forEach((custom_field, index, self) =>{
+        let temp = custom_field
+        temp._id = ObjectID(temp._id)
+        self[index] = temp
+      })
+    } else {
       newPlant.custom_fields = []
     }
 
@@ -911,42 +917,50 @@ module.exports = async function() {
   async function updatePlant({plantId, updatedPlant, user_id}) {
     //Convert all passed in array of id to ObjectId
     //User should get data of the plant when they start editing
-    if(updatedPlant.images) {
+    if (updatedPlant.images) {
       updatedPlant.images.forEach((image, index, self) => {
         self[index] = ObjectID(image)
       })
     }
 
-    if(updatedPlant.audio_files) {
+    if (updatedPlant.audio_files) {
       updatedPlant.audio_files.forEach((audio, index, self) => {
         self[index] = ObjectID(audio)
       })
     }
 
-    if(updatedPlant.videos) {
+    if (updatedPlant.videos) {
       updatedPlant.videos.forEach((video, index, self) => {
         self[index] = ObjectID(video)
       })
     }
 
-    if(updatedPlant.tags) {
+    if (updatedPlant.tags) {
       updatedPlant.tags.forEach((tag, index, self) => {
         self[index] = ObjectID(tag)
       })
     }
 
-    if(updatedPlant.categories) {
+    if (updatedPlant.categories) {
       updatedPlant.categories.forEach((category, index, self) => {
         self[index] = ObjectID(category)
       })
     }
 
-    if(updatedPlant.locations) {
+    if (updatedPlant.locations) {
       updatedPlant.locations.forEach((location, index, self) => {
         self[index] = ObjectID(location)
       })
     }
 
+    if (updatedPlant.custom_fields) {
+      updatedPlant.custom_fields.forEach((custom_field, index, self) =>{
+        let temp = custom_field
+        temp._id = ObjectID(custom_field._id)
+        self[index] = temp
+      })
+    }
+   
     //New revision for when plant is updated
     const revision = await createRevision({user_id: user_id})
 
@@ -1183,18 +1197,18 @@ module.exports = async function() {
   //POST /api/waypoints
   async function createWaypoint({newWaypoint, user_id}) {
     //Check required none array field first
-    if(!newWaypoint.waypoint_name) {
+    if (!newWaypoint.waypoint_name) {
       throw Error("Missing waypoint name")
     }
 
-    if(!newWaypoint.description) {
+    if (!newWaypoint.description) {
       throw Error("Missing description")
     }
 
     //Convert all passed in array of id to ObjectId
     //Require passing in array of string
     //Default to empty array if the field is not given
-    if(newWaypoint.images) {
+    if (newWaypoint.images) {
       newWaypoint.images.forEach((image, index, self) => {
         self[index] = ObjectID(image)
       })
@@ -1202,7 +1216,7 @@ module.exports = async function() {
       newWaypoint.images = []
     }
 
-    if(newWaypoint.audio_files) {
+    if (newWaypoint.audio_files) {
       newWaypoint.audio_files.forEach((audio, index, self) => {
         self[index] = ObjectID(audio)
       })
@@ -1210,7 +1224,7 @@ module.exports = async function() {
       newWaypoint.audio_files = []
     }
 
-    if(newWaypoint.videos) {
+    if (newWaypoint.videos) {
       newWaypoint.videos.forEach((video, index, self) => {
         self[index] = ObjectID(video)
       })
@@ -1218,7 +1232,7 @@ module.exports = async function() {
       newWaypoint.videos = []
     }
 
-    if(newWaypoint.tags) {
+    if (newWaypoint.tags) {
       newWaypoint.tags.forEach((tag, index, self) => {
         self[index] = ObjectID(tag)
       })
@@ -1226,7 +1240,7 @@ module.exports = async function() {
       newWaypoint.tags = []
     }
 
-    if(newWaypoint.categories) {
+    if (newWaypoint.categories) {
       newWaypoint.categories.forEach((category, index, self) => {
         self[index] = ObjectID(category)
       })
@@ -1234,13 +1248,13 @@ module.exports = async function() {
       newWaypoint.categories = []
     }
 
-    if(newWaypoint.location) {
+    if (newWaypoint.location) {
       newWaypoint.location = ObjectID(newWaypoint.location)
     } else {
       throw Error("Missing location")
     }
 
-    if(newWaypoint.plants) {
+    if (newWaypoint.plants) {
       newWaypoint.plants.forEach((plant, index, self) => {
         self[index] = ObjectID(plant)
       })
@@ -1248,7 +1262,13 @@ module.exports = async function() {
       newWaypoint.plants = []
     }
 
-    if(!newWaypoint.custom_fields) {
+    if (newWaypoint.custom_fields) {
+      newWaypoint.custom_fields.forEach((custom_field, index, self) =>{
+        let temp = custom_field
+        temp._id = ObjectID(temp._id)
+        self[index] = temp
+      })
+    } else {
       newWaypoint.custom_fields = []
     }
 
@@ -1473,43 +1493,51 @@ module.exports = async function() {
   async function updateWaypoint({waypointId, updatedWaypoint, user_id}) {
     //Convert all passed in array of id to ObjectId
     //User should get data of the waypoint when they start editing
-    if(updatedWaypoint.images) {
+    if (updatedWaypoint.images) {
       updatedWaypoint.images.forEach((image, index, self) => {
         self[index] = ObjectID(image)
       })
     }
 
-    if(updatedWaypoint.audio_files) {
+    if (updatedWaypoint.audio_files) {
       updatedWaypoint.audio_files.forEach((audio, index, self) => {
         self[index] = ObjectID(audio)
       })
     }
 
-    if(updatedWaypoint.videos) {
+    if (updatedWaypoint.videos) {
       updatedWaypoint.videos.forEach((video, index, self) => {
         self[index] = ObjectID(video)
       })
     }
 
-    if(updatedWaypoint.tags) {
+    if (updatedWaypoint.tags) {
       updatedWaypoint.tags.forEach((tag, index, self) => {
         self[index] = ObjectID(tag)
       })
     }
 
-    if(updatedWaypoint.categories) {
+    if (updatedWaypoint.categories) {
       updatedWaypoint.categories.forEach((category, index, self) => {
         self[index] = ObjectID(category)
       })
     }
 
-    if(updatedWaypoint.location) {
+    if (updatedWaypoint.location) {
       updatedWaypoint.location = ObjectID(updatedWaypoint.location)
     }
 
-    if(updatedWaypoint.plants) {
+    if (updatedWaypoint.plants) {
       updatedWaypoint.plants.forEach((plant, index, self) => {
         self[index] = ObjectID(plant)
+      })
+    }
+
+    if (updatedWaypoint.custom_fields) {
+      updatedWaypoint.custom_fields.forEach((custom_field, index, self) =>{
+        let temp = custom_field
+        temp._id = ObjectID(custom_field._id)
+        self[index] = temp
       })
     }
 
@@ -1927,18 +1955,18 @@ module.exports = async function() {
   //POST /api/tours
   async function createTour({newTour, user_id}) {
     //Check required none array field first
-    if(!newTour.tour_name) {
+    if (!newTour.tour_name) {
       throw Error("Missing tour name")
     }
 
-    if(!newTour.description) {
+    if (!newTour.description) {
       throw Error("Missing description")
     }
 
     //Convert all passed in array of id to ObjectId
     //Require passing in array of string
     //Default to empty array if the field is not given
-    if(newTour.images) {
+    if (newTour.images) {
       newTour.images.forEach((image, index, self) => {
         self[index] = ObjectID(image)
       })
@@ -1946,7 +1974,7 @@ module.exports = async function() {
       newTour.images = []
     }
 
-    if(newTour.audio_files) {
+    if (newTour.audio_files) {
       newTour.audio_files.forEach((audio, index, self) => {
         self[index] = ObjectID(audio)
       })
@@ -1954,7 +1982,7 @@ module.exports = async function() {
       newTour.audio_files = []
     }
 
-    if(newTour.videos) {
+    if (newTour.videos) {
       newTour.videos.forEach((video, index, self) => {
         self[index] = ObjectID(video)
       })
@@ -1962,7 +1990,7 @@ module.exports = async function() {
       newTour.videos = []
     }
 
-    if(newTour.tags) {
+    if (newTour.tags) {
       newTour.tags.forEach((tag, index, self) => {
         self[index] = ObjectID(tag)
       })
@@ -1970,7 +1998,7 @@ module.exports = async function() {
       newTour.tags = []
     }
 
-    if(newTour.categories) {
+    if (newTour.categories) {
       newTour.categories.forEach((category, index, self) => {
         self[index] = ObjectID(category)
       })
@@ -1978,7 +2006,7 @@ module.exports = async function() {
       newTour.categories = []
     }
 
-    if(newTour.plants) {
+    if (newTour.plants) {
       newTour.plants.forEach((plant, index, self) => {
         self[index] = ObjectID(plant)
       })
@@ -1986,7 +2014,7 @@ module.exports = async function() {
       newTour.plants = []
     }
 
-    if(newTour.waypoints) {
+    if (newTour.waypoints) {
       newTour.waypoints.forEach((waypoint, index, self) => {
         self[index] = ObjectID(waypoint)
       })
@@ -1994,7 +2022,13 @@ module.exports = async function() {
       newTour.waypoints = []
     }
 
-    if(!newTour.custom_fields) {
+    if (newTour.custom_fields) {
+      newTour.custom_fields.forEach((custom_field, index, self) =>{
+        let temp = custom_field
+        temp._id = ObjectID(temp._id)
+        self[index] = temp
+      })
+    } else {
       newTour.custom_fields = []
     }
 
@@ -2397,45 +2431,53 @@ module.exports = async function() {
   async function updateTour({tourId, updatedTour, user_id}) {
     //Convert all passed in array of id to ObjectId
     //User should get data of the tour when they start editing
-    if(updatedTour.images) {
+    if (updatedTour.images) {
       updatedTour.images.forEach((image, index, self) => {
         self[index] = ObjectID(image)
       })
     }
 
-    if(updatedTour.audio_files) {
+    if (updatedTour.audio_files) {
       updatedTour.audio_files.forEach((audio, index, self) => {
         self[index] = ObjectID(audio)
       })
     }
 
-    if(updatedTour.videos) {
+    if (updatedTour.videos) {
       updatedTour.videos.forEach((video, index, self) => {
         self[index] = ObjectID(video)
       })
     }
 
-    if(updatedTour.tags) {
+    if (updatedTour.tags) {
       updatedTour.tags.forEach((tag, index, self) => {
         self[index] = ObjectID(tag)
       })
     }
 
-    if(updatedTour.categories) {
+    if (updatedTour.categories) {
       updatedTour.categories.forEach((category, index, self) => {
         self[index] = ObjectID(category)
       })
     }
 
-    if(updatedTour.plants) {
+    if (updatedTour.plants) {
       updatedTour.plants.forEach((plant, index, self) => {
         self[index] = ObjectID(plant)
       })
     }
 
-    if(updatedTour.waypoints) {
+    if (updatedTour.waypoints) {
       updatedTour.waypoints.forEach((waypoint, index, self) => {
         self[index] = ObjectID(waypoint)
+      })
+    }
+
+    if (updatedTour.custom_fields) {
+      updatedTour.custom_fields.forEach((custom_field, index, self) =>{
+        let temp = custom_field
+        temp._id = ObjectID(custom_field._id)
+        self[index] = temp
       })
     }
 
@@ -2569,15 +2611,15 @@ module.exports = async function() {
   //POST /api/learn_more
   async function createLearnMore({newLearnMore, user_id}) {
     //Check required none array field first
-    if(!newLearnMore.learn_more_title) {
+    if (!newLearnMore.learn_more_title) {
       throw Error("Missing title")
     }
 
-    if(!newLearnMore.description) {
+    if (!newLearnMore.description) {
       throw Error("Missing description")
     }
    
-    if(newLearnMore.images) {
+    if (newLearnMore.images) {
       newLearnMore.images.forEach((image, index, self) => {
         self[index] = ObjectID(image)
       })
@@ -2585,7 +2627,7 @@ module.exports = async function() {
       newLearnMore.images = []
     }
 
-    if(newLearnMore.audio_files) {
+    if (newLearnMore.audio_files) {
       newLearnMore.audio_files.forEach((audio, index, self) => {
         self[index] = ObjectID(audio)
       })
@@ -2593,7 +2635,7 @@ module.exports = async function() {
       newLearnMore.audio_files = []
     }
 
-    if(newLearnMore.videos) {
+    if (newLearnMore.videos) {
       newLearnMore.videos.forEach((video, index, self) => {
         self[index] = ObjectID(video)
       })
@@ -2601,7 +2643,7 @@ module.exports = async function() {
       newLearnMore.videos = []
     }
 
-    if(newLearnMore.tags) {
+    if (newLearnMore.tags) {
       newLearnMore.tags.forEach((tag, index, self) => {
         self[index] = ObjectID(tag)
       })
@@ -2609,7 +2651,7 @@ module.exports = async function() {
       newLearnMore.tags = []
     }
 
-    if(newLearnMore.categories) {
+    if (newLearnMore.categories) {
       newLearnMore.categories.forEach((category, index, self) => {
         self[index] = ObjectID(category)
       })
@@ -2617,9 +2659,16 @@ module.exports = async function() {
       newLearnMore.categories = []
     }
 
-    if(!newLearnMore.custom_fields) {
+    if (newLearnMore.custom_fields) {
+      newLearnMore.custom_fields.forEach((custom_field, index, self) =>{
+        let temp = custom_field
+        temp._id = ObjectID(temp._id)
+        self[index] = temp
+      })
+    } else {
       newLearnMore.custom_fields = []
     }
+
 
     //New revision for when learn_more is created
     const revision = await createRevision({user_id: user_id})
@@ -2736,33 +2785,41 @@ module.exports = async function() {
   //Update
   //PUT /api/learn_more/:learnMoreId
   async function updateLearnMore({learnMoreId, updatedLearnMore, user_id}) {
-    if(updatedLearnMore.images) {
+    if (updatedLearnMore.images) {
       updatedLearnMore.images.forEach((image, index, self) => {
         self[index] = ObjectID(image)
       })
     }
 
-    if(updatedLearnMore.audio_files) {
+    if (updatedLearnMore.audio_files) {
       updatedLearnMore.audio_files.forEach((audio, index, self) => {
         self[index] = ObjectID(audio)
       })
     }
 
-    if(updatedLearnMore.videos) {
+    if (updatedLearnMore.videos) {
       updatedLearnMore.videos.forEach((video, index, self) => {
         self[index] = ObjectID(video)
       })
     }
 
-    if(updatedLearnMore.tags) {
+    if (updatedLearnMore.tags) {
       updatedLearnMore.tags.forEach((tag, index, self) => {
         self[index] = ObjectID(tag)
       })
     }
     
-    if(updatedLearnMore.categories) {
+    if (updatedLearnMore.categories) {
       updatedLearnMore.categories.forEach((category, index, self) => {
         self[index] = ObjectID(category)
+      })
+    }
+
+    if (updatedLearnMore.custom_fields) {
+      updatedLearnMore.custom_fields.forEach((custom_field, index, self) =>{
+        let temp = custom_field
+        temp._id = ObjectID(custom_field._id)
+        self[index] = temp
       })
     }
 
