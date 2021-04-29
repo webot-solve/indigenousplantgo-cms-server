@@ -51,7 +51,7 @@ const storage = multerS3({
 const upload = multer({storage: storage})
 
 mongoDatabase().then((database) => {
-  const usersRouter = makeUsersRouter({database, authorize: jwt.authorize, generateToken: jwt.generateToken})
+  const usersRouter = makeUsersRouter({database, authorize: jwt.authorize, generateToken: jwt.generateToken, verifyKey: apikey.verifyKey})
   app.use('/api/users', usersRouter)
 
   const pingRouter = makePingRouter({authorize: jwt.authorize})

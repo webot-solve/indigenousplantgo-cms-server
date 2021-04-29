@@ -1,7 +1,23 @@
 const express = require('express')
 
-module.exports = function({database, authorize, generateToken}) {
+module.exports = function({database, authorize, generateToken, verifyKey}) {
   const router = express.Router()
+
+  //Get All
+  //GET /api/users
+  router.get('/', verifyKey, async (req, res) => {
+    try {
+      const result = await database.getUsers()
+      const filteredResult = []
+      result.forEach((user) => {
+        filteredResult.push((({_id, email, user_name, role}) => ({_id, email, user_name, role}))(user))
+      })
+      res.send(filteredResult)
+    } catch (error) {
+      console.error(error)
+      res.status(401).send({error: error.message})
+    }
+  })
 
   //Create
   //POST /api/users - register

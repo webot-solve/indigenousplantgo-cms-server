@@ -25,6 +25,12 @@ module.exports = async function() {
 
   //Users
 
+  //Get all user
+  //GET /api/users
+  async function getUsers() {
+    return await users.find().toArray()
+  }
+
   //Create new user, use for register
   //Takes in email, username and password, role default to Manager
   //POST /api/users
@@ -2852,6 +2858,7 @@ module.exports = async function() {
 
   return {
     //User
+    getUsers,
     createUser,
     getUser,
     updateUser,
