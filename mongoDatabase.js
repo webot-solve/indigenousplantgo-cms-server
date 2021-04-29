@@ -68,7 +68,7 @@ module.exports = async function() {
   //Get One user, use for login
   //Takes in email/username and password and find one user that match
   //POST /api/users/login
-  async function getUser({user_name, password}) {
+  async function getUserLogin({user_name, password}) {
     const user = await users.findOne({
       $or: [{email: user_name}, {user_name: user_name}]
     })
@@ -82,6 +82,12 @@ module.exports = async function() {
     }
 
     return user
+  }
+
+  //Get One
+  //GET /api/users/:userId
+  async function getUser({userId}) {
+    return await users.findOne({_id: ObjectID(userId)})
   }
 
   //Update One user, should be authorized
@@ -2860,6 +2866,7 @@ module.exports = async function() {
     //User
     getUsers,
     createUser,
+    getUserLogin,
     getUser,
     updateUser,
     deleteUser,
