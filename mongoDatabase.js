@@ -94,8 +94,10 @@ module.exports = async function() {
   //Update base on userId
   //PUT /api/users/:userId
   async function updateUser({userId, updatedUser, userRole}) {
-    console.log(`updatedUser(req.body inside the function): ${updatedUser}`)
-    console.log(`userRole(role of user base on token): ${userRole}`)
+    console.log(`updatedUser(req.body inside the function):`)
+    console.log(updatedUser)
+    console.log(`userRole(role of user base on token):`)
+    console.log(userRole)
     if (updatedUser.email || updatedUser.user_name) {
       const user = await users.findOne({
         $or: [{email: updatedUser.email}, {user_name: updatedUser.user_name}]
