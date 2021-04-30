@@ -1,6 +1,7 @@
 const {MongoClient, ObjectID} = require('mongodb')
 const bcrypt = require('bcryptjs')
 require('dotenv').config()
+const nodemailer = require('nodemailer')
 
 const url = process.env.MONGO_DB_URL
 const client = new MongoClient(url, {useUnifiedTopology: true, useNewUrlParser: true})
@@ -94,10 +95,6 @@ module.exports = async function() {
   //Update base on userId
   //PUT /api/users/:userId
   async function updateUser({userId, updatedUser, userRole}) {
-    console.log(`updatedUser(req.body inside the function):`)
-    console.log(updatedUser)
-    console.log(`userRole(role of user base on token):`)
-    console.log(userRole)
     if (updatedUser.email || updatedUser.user_name) {
       const user = await users.findOne({
         $or: [{email: updatedUser.email}, {user_name: updatedUser.user_name}]
@@ -138,6 +135,54 @@ module.exports = async function() {
     })
 
     return result
+  }
+
+  //Reset password
+  //POST /api/users/resetPassword
+  async function resetPassword({email}) {
+    if (!email) {
+      throw Error("Missing email")
+    }
+
+    const user = await users.findOne({email: email})
+
+    if (!user) {
+      throw Error("No user with that email")
+    }
+
+    //Random 8 character string that can be any of the characters here: 0-9, a-z
+    var recoveryPassword = Math.random().toString(36).slice(-8)
+
+    //Hash password
+    const encrypted = await bcrypt.hash(recoveryPassword, 12)
+
+    const result = await users.findOneAndUpdate(
+      {email: email},
+      {$set: {password: encrypted}}
+    )
+
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.SENDER_EMAIL,
+        pass: process.env.SENDER_PASSWORD
+      }
+    })
+
+    const mailOptions = {
+      from: process.env.SENDER_EMAIL,
+      to: email,
+      subject: 'Password reset',
+      text: `Your recovery password is: ${recoveryPassword}`
+    }
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        throw Error(error)
+      } else {
+        return (`Email send: ${info.response}`)
+      }
+    })
   }
 
   //Images
@@ -2874,6 +2919,7 @@ module.exports = async function() {
     getUser,
     updateUser,
     deleteUser,
+    resetPassword,
     //Image
     getImages,
     createImage,
