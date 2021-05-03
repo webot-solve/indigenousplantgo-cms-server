@@ -750,23 +750,22 @@ module.exports = async function() {
       {
         $group: {
           _id: '$_id',
-          plant_name: {$first: '$plant_name'},
-          scientific_name: {$first: '$scientific_name'},
-          description: {$first: '$description'},
-          images: {$first: '$images'},
-          audio_files: {$first: '$audio_files'},
-          videos: {$first: '$videos'},
-          tags: {$first: '$tags'},
-          categories: {$first: '$categories'},
-          locations: {$first: '$locations'},
-          custom_fields: {$first: '$custom_fields'},
+          root: {$mergeObjects: '$$ROOT'},
           revision_history: {$push: '$revision_history'}
+        }
+      },
+      {
+        $replaceRoot: {
+          newRoot: {
+            $mergeObjects: ['$root', '$$ROOT']
+          }
         }
       },
       {
         $project: {
           'revision_history.user.password': 0,
-          'revision_history.user.role': 0
+          'revision_history.user.role': 0,
+          root: 0
         }
       }
     ]
@@ -794,58 +793,132 @@ module.exports = async function() {
     //Require passing in array of string
     //Default to empty array if the field is not given
     if (newPlant.images) {
-      newPlant.images.forEach((image, index, self) => {
-        self[index] = ObjectID(image)
-      })
+      if (!Array.isArray(newPlant.images)) {
+        throw Error("The field images must be array")
+      }
+
+      try {
+        newPlant.images.forEach((image, index, self) => {
+          self[index] = ObjectID(image)
+        })
+      } catch {
+        throw Error("Not all elements under images are valid ObjectId")
+      }
     } else {
       newPlant.images = []
     }
 
     if (newPlant.audio_files) {
-      newPlant.audio_files.forEach((audio, index, self) => {
-        self[index] = ObjectID(audio)
-      })
+      if (!Array.isArray(newPlant.audio_files)) {
+        throw Error("The field audio_files must be array")
+      }
+
+      try {
+        newPlant.audio_files.forEach((audio, index, self) => {
+          self[index] = ObjectID(audio)
+        })
+      } catch {
+        throw Error("Not all elements under audio_files are valid ObjectId")
+      }
     } else {
       newPlant.audio_files = []
     }
 
     if (newPlant.videos) {
-      newPlant.videos.forEach((video, index, self) => {
-        self[index] = ObjectID(video)
-      })
+      if (!Array.isArray(newPlant.videos)) {
+        throw Error("The field videos must be array")
+      }
+
+      try {
+        newPlant.videos.forEach((video, index, self) => {
+          self[index] = ObjectID(video)
+        })
+      } catch {
+        throw Error("Not all elements under videos are valid ObjectId")
+      }
     } else {
       newPlant.videos = []
     }
 
     if (newPlant.tags) {
-      newPlant.tags.forEach((tag, index, self) => {
-        self[index] = ObjectID(tag)
-      })
+      if (!Array.isArray(newPlant.tags)) {
+        throw Error("The field tags must be array")
+      }
+
+      try {
+        newPlant.tags.forEach((tag, index, self) => {
+          self[index] = ObjectID(tag)
+        })
+      } catch {
+        throw Error("Not all elements under tags are valid ObjectId")
+      }
     } else {
       newPlant.tags = []
     }
 
     if (newPlant.categories) {
-      newPlant.categories.forEach((category, index, self) => {
-        self[index] = ObjectID(category)
-      })
+      if (!Array.isArray(newPlant.categories)) {
+        throw Error("The field categories must be array")
+      }
+
+      try {
+        newPlant.categories.forEach((category, index, self) => {
+          self[index] = ObjectID(category)
+        })
+      } catch {
+        throw Error("Not all elements under categories are valid ObjectId")
+      }
     } else {
       newPlant.categories = []
     }
 
     if (newPlant.locations) {
-      newPlant.locations.forEach((location, index, self) => {
-        self[index] = ObjectID(location)
-      })
+      if (!Array.isArray(newPlant.locations)) {
+        throw Error("The field locations must be array")
+      }
+
+      try {
+        newPlant.locations.forEach((location, index, self) => {
+          self[index] = ObjectID(location)
+        })
+      } catch {
+        throw Error("Not all elements under locations are valid ObjectId")
+      }
     } else {
       newPlant.locations = []
     }
 
     if (newPlant.custom_fields) {
-      newPlant.custom_fields.forEach((custom_field, index, self) =>{
-        let temp = custom_field
-        temp._id = ObjectID(temp._id)
-        self[index] = temp
+      if (!Array.isArray(newPlant.custom_fields)) {
+        throw Error("The field custom_fields must be array")
+      }
+
+      //If custom_fields exist, it must have _id, field_title, and content
+      newPlant.custom_fields.forEach((custom_field, index, self) => {
+        //Check if element is type object
+        if (!(typeof custom_field === 'object' && custom_field !== null)) {
+          throw Error("At least one of the custom_field is not of type object or is null")
+        }
+
+        if (!custom_field._id) {
+          throw Error("At least one of the custom_field is missing _id")
+        }
+
+        if (!custom_field.field_title) {
+          throw Error("At least one of the custom_field is missing field_title")
+        }
+
+        if (!custom_field.content) {
+          throw Error("At least one of the custom_field is missing content")
+        }
+
+        try {
+          let temp = custom_field
+          temp._id = ObjectID(temp._id)
+          self[index] = temp
+        } catch {
+          throw Error("A _id under custom_field is not valid ObjectId")
+        }
       })
     } else {
       newPlant.custom_fields = []
@@ -949,23 +1022,22 @@ module.exports = async function() {
       {
         $group: {
           _id: '$_id',
-          plant_name: {$first: '$plant_name'},
-          scientific_name: {$first: '$scientific_name'},
-          description: {$first: '$description'},
-          images: {$first: '$images'},
-          audio_files: {$first: '$audio_files'},
-          videos: {$first: '$videos'},
-          tags: {$first: '$tags'},
-          categories: {$first: '$categories'},
-          locations: {$first: '$locations'},
-          custom_fields: {$first: '$custom_fields'},
+          root: {$mergeObjects: '$$ROOT'},
           revision_history: {$push: '$revision_history'}
+        }
+      },
+      {
+        $replaceRoot: {
+          newRoot: {
+            $mergeObjects: ['$root', '$$ROOT']
+          }
         }
       },
       {
         $project: {
           'revision_history.user.password': 0,
-          'revision_history.user.role': 0
+          'revision_history.user.role': 0,
+          root: 0
         }
       }
     ]
@@ -979,46 +1051,120 @@ module.exports = async function() {
     //Convert all passed in array of id to ObjectId
     //User should get data of the plant when they start editing
     if (updatedPlant.images) {
-      updatedPlant.images.forEach((image, index, self) => {
-        self[index] = ObjectID(image)
-      })
+      if (!Array.isArray(updatedPlant.images)) {
+        throw Error("The field images must be array")
+      }
+
+      try {
+        updatedPlant.images.forEach((image, index, self) => {
+          self[index] = ObjectID(image)
+        })
+      } catch {
+        throw Error("Not all elements under images are valid ObjectId")
+      }
     }
 
     if (updatedPlant.audio_files) {
-      updatedPlant.audio_files.forEach((audio, index, self) => {
-        self[index] = ObjectID(audio)
-      })
+      if (!Array.isArray(updatedPlant.audio_files)) {
+        throw Error("The field audio_files must be array")
+      }
+
+      try {
+        updatedPlant.audio_files.forEach((audio, index, self) => {
+          self[index] = ObjectID(audio)
+        })
+      } catch {
+        throw Error("Not all elements under audio_files are valid ObjectId")
+      }
     }
 
     if (updatedPlant.videos) {
-      updatedPlant.videos.forEach((video, index, self) => {
-        self[index] = ObjectID(video)
-      })
+      if (!Array.isArray(updatedPlant.videos)) {
+        throw Error("The field videos must be array")
+      }
+
+      try {
+        updatedPlant.videos.forEach((video, index, self) => {
+          self[index] = ObjectID(video)
+        })
+      } catch {
+        throw Error("Not all elements under videos are valid ObjectId")
+      }
     }
 
     if (updatedPlant.tags) {
-      updatedPlant.tags.forEach((tag, index, self) => {
-        self[index] = ObjectID(tag)
-      })
+      if (!Array.isArray(updatedPlant.tags)) {
+        throw Error("The field tags must be array")
+      }
+
+      try {
+        updatedPlant.tags.forEach((tag, index, self) => {
+          self[index] = ObjectID(tag)
+        })
+      } catch {
+        throw Error("Not all elements under tags are valid ObjectId")
+      }
     }
 
     if (updatedPlant.categories) {
-      updatedPlant.categories.forEach((category, index, self) => {
-        self[index] = ObjectID(category)
-      })
+      if (!Array.isArray(updatedPlant.categories)) {
+        throw Error("The field categories must be array")
+      }
+
+      try {
+        updatedPlant.categories.forEach((category, index, self) => {
+          self[index] = ObjectID(category)
+        })
+      } catch {
+        throw Error("Not all elements under categories are valid ObjectId")
+      }
     }
 
     if (updatedPlant.locations) {
-      updatedPlant.locations.forEach((location, index, self) => {
-        self[index] = ObjectID(location)
-      })
+      if (!Array.isArray(updatedPlant.locations)) {
+        throw Error("The field locations must be array")
+      }
+
+      try {
+        updatedPlant.locations.forEach((location, index, self) => {
+          self[index] = ObjectID(location)
+        })
+      } catch {
+        throw Error("Not all elements under locations are valid ObjectId")
+      }
     }
 
     if (updatedPlant.custom_fields) {
-      updatedPlant.custom_fields.forEach((custom_field, index, self) =>{
-        let temp = custom_field
-        temp._id = ObjectID(custom_field._id)
-        self[index] = temp
+      if (!Array.isArray(updatedPlant.custom_fields)) {
+        throw Error("The field custom_fields must be array")
+      }
+
+      //If custom_fields exist, it must have _id, field_title, and content
+      updatedPlant.custom_fields.forEach((custom_field, index, self) => {
+        //Check if element is type object
+        if (!(typeof custom_field === 'object' && custom_field !== null)) {
+          throw Error("At least one of the custom_field is not of type object or is null")
+        }
+
+        if (!custom_field._id) {
+          throw Error("At least one of the custom_field is missing _id")
+        }
+
+        if (!custom_field.field_title) {
+          throw Error("At least one of the custom_field is missing field_title")
+        }
+
+        if (!custom_field.content) {
+          throw Error("At least one of the custom_field is missing content")
+        }
+
+        try {
+          let temp = custom_field
+          temp._id = ObjectID(custom_field._id)
+          self[index] = temp
+        } catch {
+          throw Error("A _id under custom_field is not valid ObjectId")
+        }
       })
     }
    
@@ -1101,9 +1247,9 @@ module.exports = async function() {
       {
         $lookup: {
           from: 'locations',
-          localField: 'location',
+          localField: 'locations',
           foreignField: '_id',
-          as: 'location'
+          as: 'locations'
         }
       },
       //Plant
@@ -1178,25 +1324,25 @@ module.exports = async function() {
           as: 'plants.revision_history'
         }
       },
-      {
-        $unwind: {
-          path: '$plants.revision_history',
-          preserveNullAndEmptyArrays: true
-        }
-      },
-      {
-        $sort: {
-          'plants.revision_history.date': -1
-        }
-      },
-      {
-        $lookup: {
-          from: 'users',
-          localField: 'plants.revision_history.user',
-          foreignField: '_id',
-          as: 'plants.revision_history.user'
-        }
-      },
+      // {
+      //   $unwind: {
+      //     path: '$plants.revision_history',
+      //     preserveNullAndEmptyArrays: true
+      //   }
+      // },
+      // {
+      //   $sort: {
+      //     'plants.revision_history.date': -1
+      //   }
+      // },
+      // {
+      //   $lookup: {
+      //     from: 'users',
+      //     localField: 'plants.revision_history.user',
+      //     foreignField: '_id',
+      //     as: 'plants.revision_history.user'
+      //   }
+      // },
       //Revision
       {
         $lookup: {
@@ -1228,17 +1374,16 @@ module.exports = async function() {
       {
         $group: {
           _id: '$_id',
-          waypoint_name: {$first: '$waypoint_name'},
-          description: {$first: '$description'},
-          images: {$first: '$images'},
-          audio_files: {$first: '$audio_files'},
-          videos: {$first: '$videos'},
-          tags: {$first: '$tags'},
-          categories: {$first: '$categories'},
-          location: {$first: '$location'},
-          plants: {$first: '$plants'},
-          custom_fields: {$first: '$custom_fields'},
-          revision_history: {$push: '$revision_history'}
+          root: {$mergeObjects: '$$ROOT'},
+          plants: {$push: '$plants'},
+          revision_history: {$push: '$revision_history'},
+        }
+      },
+      {
+        $replaceRoot: {
+          newRoot: {
+            $mergeObjects: ['$root', '$$ROOT']
+          }
         }
       },
       {
@@ -1246,7 +1391,8 @@ module.exports = async function() {
           'plants.revision_history.user.password': 0,
           'plants.revision_history.user.role': 0,
           'revision_history.user.password': 0,
-          'revision_history.user.role': 0
+          'revision_history.user.role': 0,
+          root: 0
         }
       }
     ]
@@ -1270,64 +1416,147 @@ module.exports = async function() {
     //Require passing in array of string
     //Default to empty array if the field is not given
     if (newWaypoint.images) {
-      newWaypoint.images.forEach((image, index, self) => {
-        self[index] = ObjectID(image)
-      })
+      if (!Array.isArray(newWaypoint.images)) {
+        throw Error("The field images must be array")
+      }
+
+      try {
+        newWaypoint.images.forEach((image, index, self) => {
+          self[index] = ObjectID(image)
+        })
+      } catch {
+        throw Error("Not all elements under images are valid ObjectId")
+      }
     } else {
       newWaypoint.images = []
     }
 
     if (newWaypoint.audio_files) {
-      newWaypoint.audio_files.forEach((audio, index, self) => {
-        self[index] = ObjectID(audio)
-      })
+      if (!Array.isArray(newWaypoint.audio_files)) {
+        throw Error("The field audio_files must be array")
+      }
+
+      try {
+        newWaypoint.audio_files.forEach((audio, index, self) => {
+          self[index] = ObjectID(audio)
+        })
+      } catch {
+        throw Error("Not all elements under audio_files are valid ObjectId")
+      }
     } else {
       newWaypoint.audio_files = []
     }
 
     if (newWaypoint.videos) {
-      newWaypoint.videos.forEach((video, index, self) => {
-        self[index] = ObjectID(video)
-      })
+      if (!Array.isArray(newWaypoint.videos)) {
+        throw Error("The field videos must be array")
+      }
+
+      try {
+        newWaypoint.videos.forEach((video, index, self) => {
+          self[index] = ObjectID(video)
+        })
+      } catch {
+        throw Error("Not all elements under videos are valid ObjectId")
+      }
     } else {
       newWaypoint.videos = []
     }
 
     if (newWaypoint.tags) {
-      newWaypoint.tags.forEach((tag, index, self) => {
-        self[index] = ObjectID(tag)
-      })
+      if (!Array.isArray(newWaypoint.tags)) {
+        throw Error("The field tags must be array")
+      }
+
+      try {
+        newWaypoint.tags.forEach((tag, index, self) => {
+          self[index] = ObjectID(tag)
+        })
+      } catch {
+        throw Error("Not all elements under tags are valid ObjectId")
+      }
     } else {
       newWaypoint.tags = []
     }
 
     if (newWaypoint.categories) {
-      newWaypoint.categories.forEach((category, index, self) => {
-        self[index] = ObjectID(category)
-      })
+      if (!Array.isArray(newWaypoint.categories)) {
+        throw Error("The field categories must be array")
+      }
+
+      try {
+        newWaypoint.categories.forEach((category, index, self) => {
+          self[index] = ObjectID(category)
+        })
+      } catch {
+        throw Error("Not all elements under categories are valid ObjectId")
+      }
     } else {
       newWaypoint.categories = []
     }
 
-    if (newWaypoint.location) {
-      newWaypoint.location = ObjectID(newWaypoint.location)
+    if (newWaypoint.locations) {
+      if (!Array.isArray(newWaypoint.locations)) {
+        throw Error("The field locations must be array")
+      }
+
+      try {
+        newWaypoint.locations.forEach((location, index, self) => {
+          self[index] = ObjectID(location)
+        })
+      } catch {
+        throw Error("Not all elements under locations are valid ObjectId")
+      }
     } else {
-      throw Error("Missing location")
+      newWaypoint.locations = []
     }
 
     if (newWaypoint.plants) {
-      newWaypoint.plants.forEach((plant, index, self) => {
-        self[index] = ObjectID(plant)
-      })
+      if (!Array.isArray(newWaypoint.plants)) {
+        throw Error("The field plants must be array")
+      }
+
+      try {
+        newWaypoint.plants.forEach((plant, index, self) => {
+          self[index] = ObjectID(plant)
+        })
+      } catch {
+        throw Error("Not all elements under plants are valid ObjectId")
+      }
     } else {
       newWaypoint.plants = []
     }
 
     if (newWaypoint.custom_fields) {
-      newWaypoint.custom_fields.forEach((custom_field, index, self) =>{
-        let temp = custom_field
-        temp._id = ObjectID(temp._id)
-        self[index] = temp
+      if (!Array.isArray(newWaypoint.custom_fields)) {
+        throw Error("The field custom_fields must be array")
+      }
+
+      newWaypoint.custom_fields.forEach((custom_field, index, self) => {
+        //Check if element is type object
+        if (!(typeof custom_field === 'object' && custom_field !== null)) {
+          throw Error("At least one of the custom_field is not of type object or is null")
+        }
+
+        if (!custom_field._id) {
+          throw Error("At least one of the custom_field is missing _id")
+        }
+
+        if (!custom_field.field_title) {
+          throw Error("At least one of the custom_field is missing field_title")
+        }
+
+        if (!custom_field.content) {
+          throw Error("At least one of the custom_field is missing content")
+        }
+
+        try {
+          let temp = custom_field
+          temp._id = ObjectID(custom_field._id)
+          self[index] = temp
+        } catch {
+          throw Error("A _id under custom_field is not valid ObjectId")
+        }
       })
     } else {
       newWaypoint.custom_fields = []
@@ -1396,9 +1625,9 @@ module.exports = async function() {
       {
         $lookup: {
           from: 'locations',
-          localField: 'location',
+          localField: 'locations',
           foreignField: '_id',
-          as: 'location'
+          as: 'locations'
         }
       },
       //Plant
@@ -1473,25 +1702,25 @@ module.exports = async function() {
           as: 'plants.revision_history'
         }
       },
-      {
-        $unwind: {
-          path: '$plants.revision_history',
-          preserveNullAndEmptyArrays: true
-        }
-      },
-      {
-        $sort: {
-          'plants.revision_history.date': -1
-        }
-      },
-      {
-        $lookup: {
-          from: 'users',
-          localField: 'plants.revision_history.user',
-          foreignField: '_id',
-          as: 'plants.revision_history.user'
-        }
-      },
+      // {
+      //   $unwind: {
+      //     path: '$plants.revision_history',
+      //     preserveNullAndEmptyArrays: true
+      //   }
+      // },
+      // {
+      //   $sort: {
+      //     'plants.revision_history.date': -1
+      //   }
+      // },
+      // {
+      //   $lookup: {
+      //     from: 'users',
+      //     localField: 'plants.revision_history.user',
+      //     foreignField: '_id',
+      //     as: 'plants.revision_history.user'
+      //   }
+      // },
       //Revision
       {
         $lookup: {
@@ -1523,17 +1752,16 @@ module.exports = async function() {
       {
         $group: {
           _id: '$_id',
-          waypoint_name: {$first: '$waypoint_name'},
-          description: {$first: '$description'},
-          images: {$first: '$images'},
-          audio_files: {$first: '$audio_files'},
-          videos: {$first: '$videos'},
-          tags: {$first: '$tags'},
-          categories: {$first: '$categories'},
-          location: {$first: '$location'},
-          plants: {$first: '$plants'},
-          custom_fields: {$first: '$custom_fields'},
-          revision_history: {$push: '$revision_history'}
+          root: {$mergeObjects: '$$ROOT'},
+          plants: {$push: '$plants'},
+          revision_history: {$push: '$revision_history'},
+        }
+      },
+      {
+        $replaceRoot: {
+          newRoot: {
+            $mergeObjects: ['$root', '$$ROOT']
+          }
         }
       },
       {
@@ -1541,7 +1769,8 @@ module.exports = async function() {
           'plants.revision_history.user.password': 0,
           'plants.revision_history.user.role': 0,
           'revision_history.user.password': 0,
-          'revision_history.user.role': 0
+          'revision_history.user.role': 0,
+          root: 0
         }
       }
     ]
@@ -1555,50 +1784,133 @@ module.exports = async function() {
     //Convert all passed in array of id to ObjectId
     //User should get data of the waypoint when they start editing
     if (updatedWaypoint.images) {
-      updatedWaypoint.images.forEach((image, index, self) => {
-        self[index] = ObjectID(image)
-      })
+      if (!Array.isArray(updatedWaypoint.images)) {
+        throw Error("The field images must be array")
+      }
+
+      try {
+        updatedWaypoint.images.forEach((image, index, self) => {
+          self[index] = ObjectID(image)
+        })
+      } catch {
+        throw Error("Not all elements under images are valid ObjectId")
+      }
     }
 
     if (updatedWaypoint.audio_files) {
-      updatedWaypoint.audio_files.forEach((audio, index, self) => {
-        self[index] = ObjectID(audio)
-      })
+      if (!Array.isArray(updatedWaypoint.audio_files)) {
+        throw Error("The field audio_files must be array")
+      }
+
+      try {
+        updatedWaypoint.audio_files.forEach((audio, index, self) => {
+          self[index] = ObjectID(audio)
+        })
+      } catch {
+        throw Error("Not all elements under audio_files are valid ObjectId")
+      }
     }
 
     if (updatedWaypoint.videos) {
-      updatedWaypoint.videos.forEach((video, index, self) => {
-        self[index] = ObjectID(video)
-      })
+      if (!Array.isArray(updatedWaypoint.videos)) {
+        throw Error("The field videos must be array")
+      }
+
+      try {
+        updatedWaypoint.videos.forEach((video, index, self) => {
+          self[index] = ObjectID(video)
+        })
+      } catch {
+        throw Error("Not all elements under videos are valid ObjectId")
+      }
     }
 
     if (updatedWaypoint.tags) {
-      updatedWaypoint.tags.forEach((tag, index, self) => {
-        self[index] = ObjectID(tag)
-      })
+      if (!Array.isArray(updatedWaypoint.tags)) {
+        throw Error("The field tags must be array")
+      }
+
+      try {
+        updatedWaypoint.tags.forEach((tag, index, self) => {
+          self[index] = ObjectID(tag)
+        })
+      } catch {
+        throw Error("Not all elements under tags are valid ObjectId")
+      }
     }
 
     if (updatedWaypoint.categories) {
-      updatedWaypoint.categories.forEach((category, index, self) => {
-        self[index] = ObjectID(category)
-      })
+      if (!Array.isArray(updatedWaypoint.categories)) {
+        throw Error("The field categories must be array")
+      }
+
+      try {
+        updatedWaypoint.categories.forEach((category, index, self) => {
+          self[index] = ObjectID(category)
+        })
+      } catch {
+        throw Error("Not all elements under categories are valid ObjectId")
+      }
     }
 
-    if (updatedWaypoint.location) {
-      updatedWaypoint.location = ObjectID(updatedWaypoint.location)
+    if (updatedWaypoint.locations) {
+      if (!Array.isArray(updatedWaypoint.locations)) {
+        throw Error("The field locations must be array")
+      }
+
+      try {
+        updatedWaypoint.locations.forEach((location, index, self) => {
+          self[index] = ObjectID(location)
+        })
+      } catch {
+        throw Error("Not all elements under locations are valid ObjectId")
+      }
     }
 
     if (updatedWaypoint.plants) {
-      updatedWaypoint.plants.forEach((plant, index, self) => {
-        self[index] = ObjectID(plant)
-      })
+      if (!Array.isArray(updatedWaypoint.plants)) {
+        throw Error("The field plants must be array")
+      }
+
+      try {
+        updatedWaypoint.plants.forEach((plant, index, self) => {
+          self[index] = ObjectID(plant)
+        })
+      } catch {
+        throw Error("Not all elements under plants are valid ObjectId")
+      }
     }
 
     if (updatedWaypoint.custom_fields) {
-      updatedWaypoint.custom_fields.forEach((custom_field, index, self) =>{
-        let temp = custom_field
-        temp._id = ObjectID(custom_field._id)
-        self[index] = temp
+      if (!Array.isArray(updatedWaypoint.custom_fields)) {
+        throw Error("The field custom_fields must be array")
+      }
+
+      updatedWaypoint.custom_fields.forEach((custom_field, index, self) => {
+        //Check if element is type object
+        if (!(typeof custom_field === 'object' && custom_field !== null)) {
+          throw Error("At least one of the custom_field is not of type object or is null")
+        }
+
+        if (!custom_field._id) {
+          throw Error("At least one of the custom_field is missing _id")
+        }
+
+        if (!custom_field.field_title) {
+          throw Error("At least one of the custom_field is missing field_title")
+        }
+
+        if (!custom_field.content) {
+          throw Error("At least one of the custom_field is missing content")
+        }
+
+        try {
+          let temp = custom_field
+          temp._id = ObjectID(custom_field._id)
+          self[index] = temp
+        } catch {
+          throw Error("A _id under custom_field is not valid ObjectId")
+        }
       })
     }
 
@@ -1750,25 +2062,25 @@ module.exports = async function() {
           as: 'plants.revision_history'
         }
       },
-      {
-        $unwind: {
-          path: '$plants.revision_history',
-          preserveNullAndEmptyArrays: true
-        }
-      },
-      {
-        $sort: {
-          'plants.revision_history.date': -1
-        }
-      },
-      {
-        $lookup: {
-          from: 'users',
-          localField: 'plants.revision_history.user',
-          foreignField: '_id',
-          as: 'plants.revision_history.user'
-        }
-      },
+      // {
+      //   $unwind: {
+      //     path: '$plants.revision_history',
+      //     preserveNullAndEmptyArrays: true
+      //   }
+      // },
+      // {
+      //   $sort: {
+      //     'plants.revision_history.date': -1
+      //   }
+      // },
+      // {
+      //   $lookup: {
+      //     from: 'users',
+      //     localField: 'plants.revision_history.user',
+      //     foreignField: '_id',
+      //     as: 'plants.revision_history.user'
+      //   }
+      // },
       //Waypoint
       {
         $lookup: {
@@ -1841,88 +2153,88 @@ module.exports = async function() {
           as: 'waypoints.plants'
         }
       },
-      {
-        $unwind: {
-          path: '$waypoints.plants',
-          preserveNullAndEmptyArrays: true
-        }
-      },
-      {
-        $lookup: {
-          from: 'images',
-          localField: 'waypoints.plants.images',
-          foreignField: '_id',
-          as: 'waypoints.plants.images'
-        }
-      },
-      {
-        $lookup: {
-          from: 'audios',
-          localField: 'waypoints.plants.audio_files',
-          foreignField: '_id',
-          as: 'waypoints.plants.audio_files'
-        }
-      },
-      {
-        $lookup: {
-          from: 'videos',
-          localField: 'waypoints.plants.videos',
-          foreignField: '_id',
-          as: 'waypoints.plants.videos'
-        }
-      },
-      {
-        $lookup: {
-          from: 'tags',
-          localField: 'waypoints.plants.tags',
-          foreignField: '_id',
-          as: 'waypoints.plants.tags'
-        }
-      },
-      {
-        $lookup: {
-          from: 'categories',
-          localField: 'waypoints.plants.categories',
-          foreignField: '_id',
-          as: 'waypoints.plants.categories'
-        }
-      },
-      {
-        $lookup: {
-          from: 'locations',
-          localField: 'waypoints.plants.locations',
-          foreignField: '_id',
-          as: 'waypoints.plants.locations'
-        }
-      },
-      //Waypoint Plant Revision
-      {
-        $lookup: {
-          from: 'revisions',
-          localField: 'waypoints.plants.revision_history',
-          foreignField: '_id',
-          as: 'waypoints.plants.revision_history'
-        }
-      },
-      {
-        $unwind: {
-          path: '$waypoints.plants.revision_history',
-          preserveNullAndEmptyArrays: true
-        }
-      },
-      {
-        $sort: {
-          'waypoints.plants.revision_history.date': -1
-        }
-      },
-      {
-        $lookup: {
-          from: 'users',
-          localField: 'waypoints.plants.revision_history.user',
-          foreignField: '_id',
-          as: 'waypoints.plants.revision_history.user'
-        }
-      },
+      // {
+      //   $unwind: {
+      //     path: '$waypoints.plants',
+      //     preserveNullAndEmptyArrays: true
+      //   }
+      // },
+      // {
+      //   $lookup: {
+      //     from: 'images',
+      //     localField: 'waypoints.plants.images',
+      //     foreignField: '_id',
+      //     as: 'waypoints.plants.images'
+      //   }
+      // },
+      // {
+      //   $lookup: {
+      //     from: 'audios',
+      //     localField: 'waypoints.plants.audio_files',
+      //     foreignField: '_id',
+      //     as: 'waypoints.plants.audio_files'
+      //   }
+      // },
+      // {
+      //   $lookup: {
+      //     from: 'videos',
+      //     localField: 'waypoints.plants.videos',
+      //     foreignField: '_id',
+      //     as: 'waypoints.plants.videos'
+      //   }
+      // },
+      // {
+      //   $lookup: {
+      //     from: 'tags',
+      //     localField: 'waypoints.plants.tags',
+      //     foreignField: '_id',
+      //     as: 'waypoints.plants.tags'
+      //   }
+      // },
+      // {
+      //   $lookup: {
+      //     from: 'categories',
+      //     localField: 'waypoints.plants.categories',
+      //     foreignField: '_id',
+      //     as: 'waypoints.plants.categories'
+      //   }
+      // },
+      // {
+      //   $lookup: {
+      //     from: 'locations',
+      //     localField: 'waypoints.plants.locations',
+      //     foreignField: '_id',
+      //     as: 'waypoints.plants.locations'
+      //   }
+      // },
+      // //Waypoint Plant Revision
+      // {
+      //   $lookup: {
+      //     from: 'revisions',
+      //     localField: 'waypoints.plants.revision_history',
+      //     foreignField: '_id',
+      //     as: 'waypoints.plants.revision_history'
+      //   }
+      // },
+      // {
+      //   $unwind: {
+      //     path: '$waypoints.plants.revision_history',
+      //     preserveNullAndEmptyArrays: true
+      //   }
+      // },
+      // {
+      //   $sort: {
+      //     'waypoints.plants.revision_history.date': -1
+      //   }
+      // },
+      // {
+      //   $lookup: {
+      //     from: 'users',
+      //     localField: 'waypoints.plants.revision_history.user',
+      //     foreignField: '_id',
+      //     as: 'waypoints.plants.revision_history.user'
+      //   }
+      // },
       //Waypoint Revision
       {
         $lookup: {
@@ -1982,17 +2294,17 @@ module.exports = async function() {
       {
         $group: {
           _id: '$_id',
-          tour_name: {$first: '$tour_name'},
-          description: {$first: '$description'},
-          images: {$first: '$images'},
-          audio_files: {$first: '$audio_files'},
-          videos: {$first: '$videos'},
-          tags: {$first: '$tags'},
-          categories: {$first: '$categories'},
-          plants: {$first: '$plants'},
-          waypoints: {$first: '$waypoints'},
-          custom_fields: {$first: '$custom_fields'},
-          revision_history: {$push: '$revision_history'}
+          root: {$mergeObjects: '$$ROOT'},
+          plants: {$push: '$plants'},
+          waypoints: {$push: '$waypoints'},
+          revision_history: {$push: '$revision_history'},
+        }
+      },
+      {
+        $replaceRoot: {
+          newRoot: {
+            $mergeObjects: ['$root', '$$ROOT']
+          }
         }
       },
       {
@@ -2004,7 +2316,8 @@ module.exports = async function() {
           'waypoints.revision_history.user.password': 0,
           'waypoints.revision_history.user.role': 0,
           'revision_history.user.password': 0,
-          'revision_history.user.role': 0
+          'revision_history.user.role': 0,
+          root: 0
         }
       }
     ]
@@ -2028,66 +2341,147 @@ module.exports = async function() {
     //Require passing in array of string
     //Default to empty array if the field is not given
     if (newTour.images) {
-      newTour.images.forEach((image, index, self) => {
-        self[index] = ObjectID(image)
-      })
+      if (!Array.isArray(newTour.images)) {
+        throw Error("The field images must be array")
+      }
+
+      try {
+        newTour.images.forEach((image, index, self) => {
+          self[index] = ObjectID(image)
+        })
+      } catch {
+        throw Error("Not all elements under images are valid ObjectId")
+      }
     } else {
       newTour.images = []
     }
 
     if (newTour.audio_files) {
-      newTour.audio_files.forEach((audio, index, self) => {
-        self[index] = ObjectID(audio)
-      })
+      if (!Array.isArray(newTour.audio_files)) {
+        throw Error("The field audio_files must be array")
+      }
+
+      try {
+        newTour.audio_files.forEach((audio, index, self) => {
+          self[index] = ObjectID(audio)
+        })
+      } catch {
+        throw Error("Not all elements under audio_files are valid ObjectId")
+      }
     } else {
       newTour.audio_files = []
     }
 
     if (newTour.videos) {
-      newTour.videos.forEach((video, index, self) => {
-        self[index] = ObjectID(video)
-      })
+      if (!Array.isArray(newTour.videos)) {
+        throw Error("The field videos must be array")
+      }
+
+      try {
+        newTour.videos.forEach((video, index, self) => {
+          self[index] = ObjectID(video)
+        })
+      } catch {
+        throw Error("Not all elements under videos are valid ObjectId")
+      }
     } else {
       newTour.videos = []
     }
 
     if (newTour.tags) {
-      newTour.tags.forEach((tag, index, self) => {
-        self[index] = ObjectID(tag)
-      })
+      if (!Array.isArray(newTour.tags)) {
+        throw Error("The field tags must be array")
+      }
+
+      try {
+        newTour.tags.forEach((tag, index, self) => {
+          self[index] = ObjectID(tag)
+        })
+      } catch {
+        throw Error("Not all elements under tags are valid ObjectId")
+      }
     } else {
       newTour.tags = []
     }
 
     if (newTour.categories) {
-      newTour.categories.forEach((category, index, self) => {
-        self[index] = ObjectID(category)
-      })
+      if (!Array.isArray(newTour.categories)) {
+        throw Error("The field categories must be array")
+      }
+
+      try {
+        newTour.categories.forEach((category, index, self) => {
+          self[index] = ObjectID(category)
+        })
+      } catch {
+        throw Error("Not all elements under categories are valid ObjectId")
+      }
     } else {
       newTour.categories = []
     }
 
     if (newTour.plants) {
-      newTour.plants.forEach((plant, index, self) => {
-        self[index] = ObjectID(plant)
-      })
+      if (!Array.isArray(newTour.plants)) {
+        throw Error("The field plants must be array")
+      }
+
+      try {
+        newTour.plants.forEach((plant, index, self) => {
+          self[index] = ObjectID(plant)
+        })
+      } catch {
+        throw Error("Not all elements under plants are valid ObjectId")
+      }
     } else {
       newTour.plants = []
     }
 
     if (newTour.waypoints) {
-      newTour.waypoints.forEach((waypoint, index, self) => {
-        self[index] = ObjectID(waypoint)
-      })
+      if (!Array.isArray(newTour.waypoints)) {
+        throw Error("The field waypoints must be array")
+      }
+
+      try {
+        newTour.waypoints.forEach((waypoint, index, self) => {
+          self[index] = ObjectID(waypoint)
+        })
+      } catch {
+        throw Error("Not all elements under waypoints are valid ObjectId")
+      }
     } else {
       newTour.waypoints = []
     }
 
     if (newTour.custom_fields) {
-      newTour.custom_fields.forEach((custom_field, index, self) =>{
-        let temp = custom_field
-        temp._id = ObjectID(temp._id)
-        self[index] = temp
+      if (!Array.isArray(newTour.custom_fields)) {
+        throw Error("The field custom_fields must be array")
+      }
+
+      newTour.custom_fields.forEach((custom_field, index, self) => {
+        //Check if element is type object
+        if (!(typeof custom_field === 'object' && custom_field !== null)) {
+          throw Error("At least one of the custom_field is not of type object or is null")
+        }
+
+        if (!custom_field._id) {
+          throw Error("At least one of the custom_field is missing _id")
+        }
+
+        if (!custom_field.field_title) {
+          throw Error("At least one of the custom_field is missing field_title")
+        }
+
+        if (!custom_field.content) {
+          throw Error("At least one of the custom_field is missing content")
+        }
+
+        try {
+          let temp = custom_field
+          temp._id = ObjectID(custom_field._id)
+          self[index] = temp
+        } catch {
+          throw Error("A _id under custom_field is not valid ObjectId")
+        }
       })
     } else {
       newTour.custom_fields = []
@@ -2225,25 +2619,25 @@ module.exports = async function() {
           as: 'plants.revision_history'
         }
       },
-      {
-        $unwind: {
-          path: '$plants.revision_history',
-          preserveNullAndEmptyArrays: true
-        }
-      },
-      {
-        $sort: {
-          'plants.revision_history.date': -1
-        }
-      },
-      {
-        $lookup: {
-          from: 'users',
-          localField: 'plants.revision_history.user',
-          foreignField: '_id',
-          as: 'plants.revision_history.user'
-        }
-      },
+      // {
+      //   $unwind: {
+      //     path: '$plants.revision_history',
+      //     preserveNullAndEmptyArrays: true
+      //   }
+      // },
+      // {
+      //   $sort: {
+      //     'plants.revision_history.date': -1
+      //   }
+      // },
+      // {
+      //   $lookup: {
+      //     from: 'users',
+      //     localField: 'plants.revision_history.user',
+      //     foreignField: '_id',
+      //     as: 'plants.revision_history.user'
+      //   }
+      // },
       //Waypoint
       {
         $lookup: {
@@ -2316,88 +2710,88 @@ module.exports = async function() {
           as: 'waypoints.plants'
         }
       },
-      {
-        $unwind: {
-          path: '$waypoints.plants',
-          preserveNullAndEmptyArrays: true
-        }
-      },
-      {
-        $lookup: {
-          from: 'images',
-          localField: 'waypoints.plants.images',
-          foreignField: '_id',
-          as: 'waypoints.plants.images'
-        }
-      },
-      {
-        $lookup: {
-          from: 'audios',
-          localField: 'waypoints.plants.audio_files',
-          foreignField: '_id',
-          as: 'waypoints.plants.audio_files'
-        }
-      },
-      {
-        $lookup: {
-          from: 'videos',
-          localField: 'waypoints.plants.videos',
-          foreignField: '_id',
-          as: 'waypoints.plants.videos'
-        }
-      },
-      {
-        $lookup: {
-          from: 'tags',
-          localField: 'waypoints.plants.tags',
-          foreignField: '_id',
-          as: 'waypoints.plants.tags'
-        }
-      },
-      {
-        $lookup: {
-          from: 'categories',
-          localField: 'waypoints.plants.categories',
-          foreignField: '_id',
-          as: 'waypoints.plants.categories'
-        }
-      },
-      {
-        $lookup: {
-          from: 'locations',
-          localField: 'waypoints.plants.locations',
-          foreignField: '_id',
-          as: 'waypoints.plants.locations'
-        }
-      },
-      //Waypoint Plant Revision
-      {
-        $lookup: {
-          from: 'revisions',
-          localField: 'waypoints.plants.revision_history',
-          foreignField: '_id',
-          as: 'waypoints.plants.revision_history'
-        }
-      },
-      {
-        $unwind: {
-          path: '$waypoints.plants.revision_history',
-          preserveNullAndEmptyArrays: true
-        }
-      },
-      {
-        $sort: {
-          'waypoints.plants.revision_history.date': -1
-        }
-      },
-      {
-        $lookup: {
-          from: 'users',
-          localField: 'waypoints.plants.revision_history.user',
-          foreignField: '_id',
-          as: 'waypoints.plants.revision_history.user'
-        }
-      },
+      // {
+      //   $unwind: {
+      //     path: '$waypoints.plants',
+      //     preserveNullAndEmptyArrays: true
+      //   }
+      // },
+      // {
+      //   $lookup: {
+      //     from: 'images',
+      //     localField: 'waypoints.plants.images',
+      //     foreignField: '_id',
+      //     as: 'waypoints.plants.images'
+      //   }
+      // },
+      // {
+      //   $lookup: {
+      //     from: 'audios',
+      //     localField: 'waypoints.plants.audio_files',
+      //     foreignField: '_id',
+      //     as: 'waypoints.plants.audio_files'
+      //   }
+      // },
+      // {
+      //   $lookup: {
+      //     from: 'videos',
+      //     localField: 'waypoints.plants.videos',
+      //     foreignField: '_id',
+      //     as: 'waypoints.plants.videos'
+      //   }
+      // },
+      // {
+      //   $lookup: {
+      //     from: 'tags',
+      //     localField: 'waypoints.plants.tags',
+      //     foreignField: '_id',
+      //     as: 'waypoints.plants.tags'
+      //   }
+      // },
+      // {
+      //   $lookup: {
+      //     from: 'categories',
+      //     localField: 'waypoints.plants.categories',
+      //     foreignField: '_id',
+      //     as: 'waypoints.plants.categories'
+      //   }
+      // },
+      // {
+      //   $lookup: {
+      //     from: 'locations',
+      //     localField: 'waypoints.plants.locations',
+      //     foreignField: '_id',
+      //     as: 'waypoints.plants.locations'
+      //   }
+      // },
+      // //Waypoint Plant Revision
+      // {
+      //   $lookup: {
+      //     from: 'revisions',
+      //     localField: 'waypoints.plants.revision_history',
+      //     foreignField: '_id',
+      //     as: 'waypoints.plants.revision_history'
+      //   }
+      // },
+      // {
+      //   $unwind: {
+      //     path: '$waypoints.plants.revision_history',
+      //     preserveNullAndEmptyArrays: true
+      //   }
+      // },
+      // {
+      //   $sort: {
+      //     'waypoints.plants.revision_history.date': -1
+      //   }
+      // },
+      // {
+      //   $lookup: {
+      //     from: 'users',
+      //     localField: 'waypoints.plants.revision_history.user',
+      //     foreignField: '_id',
+      //     as: 'waypoints.plants.revision_history.user'
+      //   }
+      // },
       //Waypoint Revision
       {
         $lookup: {
@@ -2457,17 +2851,17 @@ module.exports = async function() {
       {
         $group: {
           _id: '$_id',
-          tour_name: {$first: '$tour_name'},
-          description: {$first: '$description'},
-          images: {$first: '$images'},
-          audio_files: {$first: '$audio_files'},
-          videos: {$first: '$videos'},
-          tags: {$first: '$tags'},
-          categories: {$first: '$categories'},
-          plants: {$first: '$plants'},
-          waypoints: {$first: '$waypoints'},
-          custom_fields: {$first: '$custom_fields'},
-          revision_history: {$push: '$revision_history'}
+          root: {$mergeObjects: '$$ROOT'},
+          plants: {$push: '$plants'},
+          waypoints: {$push: '$waypoints'},
+          revision_history: {$push: '$revision_history'},
+        }
+      },
+      {
+        $replaceRoot: {
+          newRoot: {
+            $mergeObjects: ['$root', '$$ROOT']
+          }
         }
       },
       {
@@ -2479,7 +2873,8 @@ module.exports = async function() {
           'waypoints.revision_history.user.password': 0,
           'waypoints.revision_history.user.role': 0,
           'revision_history.user.password': 0,
-          'revision_history.user.role': 0
+          'revision_history.user.role': 0,
+          root: 0
         }
       }
     ]
@@ -2493,52 +2888,133 @@ module.exports = async function() {
     //Convert all passed in array of id to ObjectId
     //User should get data of the tour when they start editing
     if (updatedTour.images) {
-      updatedTour.images.forEach((image, index, self) => {
-        self[index] = ObjectID(image)
-      })
+      if (!Array.isArray(updatedTour.images)) {
+        throw Error("The field images must be array")
+      }
+
+      try {
+        updatedTour.images.forEach((image, index, self) => {
+          self[index] = ObjectID(image)
+        })
+      } catch {
+        throw Error("Not all elements under images are valid ObjectId")
+      }
     }
 
     if (updatedTour.audio_files) {
-      updatedTour.audio_files.forEach((audio, index, self) => {
-        self[index] = ObjectID(audio)
-      })
+      if (!Array.isArray(updatedTour.audio_files)) {
+        throw Error("The field audio_files must be array")
+      }
+
+      try {
+        updatedTour.audio_files.forEach((audio, index, self) => {
+          self[index] = ObjectID(audio)
+        })
+      } catch {
+        throw Error("Not all elements under audio_files are valid ObjectId")
+      }
     }
 
     if (updatedTour.videos) {
-      updatedTour.videos.forEach((video, index, self) => {
-        self[index] = ObjectID(video)
-      })
+      if (!Array.isArray(updatedTour.videos)) {
+        throw Error("The field videos must be array")
+      }
+
+      try {
+        updatedTour.videos.forEach((video, index, self) => {
+          self[index] = ObjectID(video)
+        })
+      } catch {
+        throw Error("Not all elements under videos are valid ObjectId")
+      }
     }
 
     if (updatedTour.tags) {
-      updatedTour.tags.forEach((tag, index, self) => {
-        self[index] = ObjectID(tag)
-      })
+      if (!Array.isArray(updatedTour.tags)) {
+        throw Error("The field tags must be array")
+      }
+
+      try {
+        updatedTour.tags.forEach((tag, index, self) => {
+          self[index] = ObjectID(tag)
+        })
+      } catch {
+        throw Error("Not all elements under tags are valid ObjectId")
+      }
     }
 
     if (updatedTour.categories) {
-      updatedTour.categories.forEach((category, index, self) => {
-        self[index] = ObjectID(category)
-      })
+      if (!Array.isArray(updatedTour.categories)) {
+        throw Error("The field categories must be array")
+      }
+
+      try {
+        updatedTour.categories.forEach((category, index, self) => {
+          self[index] = ObjectID(category)
+        })
+      } catch {
+        throw Error("Not all elements under categories are valid ObjectId")
+      }
     }
 
     if (updatedTour.plants) {
-      updatedTour.plants.forEach((plant, index, self) => {
-        self[index] = ObjectID(plant)
-      })
+      if (!Array.isArray(updatedTour.plants)) {
+        throw Error("The field plants must be array")
+      }
+
+      try {
+        updatedTour.plants.forEach((plant, index, self) => {
+          self[index] = ObjectID(plant)
+        })
+      } catch {
+        throw Error("Not all elements under plants are valid ObjectId")
+      }
     }
 
     if (updatedTour.waypoints) {
-      updatedTour.waypoints.forEach((waypoint, index, self) => {
-        self[index] = ObjectID(waypoint)
-      })
+      if (!Array.isArray(updatedTour.waypoints)) {
+        throw Error("The field waypoints must be array")
+      }
+
+      try {
+        updatedTour.waypoints.forEach((waypoint, index, self) => {
+          self[index] = ObjectID(waypoint)
+        })
+      } catch {
+        throw Error("Not all elements under waypoints are valid ObjectId")
+      }
     }
 
     if (updatedTour.custom_fields) {
-      updatedTour.custom_fields.forEach((custom_field, index, self) =>{
-        let temp = custom_field
-        temp._id = ObjectID(custom_field._id)
-        self[index] = temp
+      if (!Array.isArray(updatedTour.custom_fields)) {
+        throw Error("The field custom_fields must be array")
+      }
+
+      updatedTour.custom_fields.forEach((custom_field, index, self) => {
+        //Check if element is type object
+        if (!(typeof custom_field === 'object' && custom_field !== null)) {
+          throw Error("At least one of the custom_field is not of type object or is null")
+        }
+
+        if (!custom_field._id) {
+          throw Error("At least one of the custom_field is missing _id")
+        }
+
+        if (!custom_field.field_title) {
+          throw Error("At least one of the custom_field is missing field_title")
+        }
+
+        if (!custom_field.content) {
+          throw Error("At least one of the custom_field is missing content")
+        }
+
+        try {
+          let temp = custom_field
+          temp._id = ObjectID(custom_field._id)
+          self[index] = temp
+        } catch {
+          throw Error("A _id under custom_field is not valid ObjectId")
+        }
       })
     }
 
@@ -2681,50 +3157,115 @@ module.exports = async function() {
     }
    
     if (newLearnMore.images) {
-      newLearnMore.images.forEach((image, index, self) => {
-        self[index] = ObjectID(image)
-      })
+      if (!Array.isArray(newLearnMore.images)) {
+        throw Error("The field images must be array")
+      }
+
+      try {
+        newLearnMore.images.forEach((image, index, self) => {
+          self[index] = ObjectID(image)
+        })
+      } catch {
+        throw Error("Not all elements under images are valid ObjectId")
+      }
     } else {
       newLearnMore.images = []
     }
 
     if (newLearnMore.audio_files) {
-      newLearnMore.audio_files.forEach((audio, index, self) => {
-        self[index] = ObjectID(audio)
-      })
+      if (!Array.isArray(newLearnMore.audio_files)) {
+        throw Error("The field audio_files must be array")
+      }
+
+      try {
+        newLearnMore.audio_files.forEach((audio, index, self) => {
+          self[index] = ObjectID(audio)
+        })
+      } catch {
+        throw Error("Not all elements under audio_files are valid ObjectId")
+      }
     } else {
       newLearnMore.audio_files = []
     }
 
     if (newLearnMore.videos) {
-      newLearnMore.videos.forEach((video, index, self) => {
-        self[index] = ObjectID(video)
-      })
+      if (!Array.isArray(newLearnMore.videos)) {
+        throw Error("The field videos must be array")
+      }
+
+      try {
+        newLearnMore.videos.forEach((video, index, self) => {
+          self[index] = ObjectID(video)
+        })
+      } catch {
+        throw Error("Not all elements under videos are valid ObjectId")
+      }
     } else {
       newLearnMore.videos = []
     }
 
     if (newLearnMore.tags) {
-      newLearnMore.tags.forEach((tag, index, self) => {
-        self[index] = ObjectID(tag)
-      })
+      if (!Array.isArray(newLearnMore.tags)) {
+        throw Error("The field tags must be array")
+      }
+
+      try {
+        newLearnMore.tags.forEach((tag, index, self) => {
+          self[index] = ObjectID(tag)
+        })
+      } catch {
+        throw Error("Not all elements under tags are valid ObjectId")
+      }
     } else {
       newLearnMore.tags = []
     }
 
     if (newLearnMore.categories) {
-      newLearnMore.categories.forEach((category, index, self) => {
-        self[index] = ObjectID(category)
-      })
+      if (!Array.isArray(newLearnMore.categories)) {
+        throw Error("The field categories must be array")
+      }
+
+      try {
+        newLearnMore.categories.forEach((category, index, self) => {
+          self[index] = ObjectID(category)
+        })
+      } catch {
+        throw Error("Not all elements under categories are valid ObjectId")
+      }
     } else {
       newLearnMore.categories = []
     }
 
     if (newLearnMore.custom_fields) {
-      newLearnMore.custom_fields.forEach((custom_field, index, self) =>{
-        let temp = custom_field
-        temp._id = ObjectID(temp._id)
-        self[index] = temp
+      if (!Array.isArray(newLearnMore.custom_fields)) {
+        throw Error("The field custom_fields must be array")
+      }
+
+      newLearnMore.custom_fields.forEach((custom_field, index, self) => {
+        //Check if element is type object
+        if (!(typeof custom_field === 'object' && custom_field !== null)) {
+          throw Error("At least one of the custom_field is not of type object or is null")
+        }
+
+        if (!custom_field._id) {
+          throw Error("At least one of the custom_field is missing _id")
+        }
+
+        if (!custom_field.field_title) {
+          throw Error("At least one of the custom_field is missing field_title")
+        }
+
+        if (!custom_field.content) {
+          throw Error("At least one of the custom_field is missing content")
+        }
+
+        try {
+          let temp = custom_field
+          temp._id = ObjectID(custom_field._id)
+          self[index] = temp
+        } catch {
+          throw Error("A _id under custom_field is not valid ObjectId")
+        }
       })
     } else {
       newLearnMore.custom_fields = []
@@ -2847,40 +3388,105 @@ module.exports = async function() {
   //PUT /api/learn_more/:learnMoreId
   async function updateLearnMore({learnMoreId, updatedLearnMore, user_id}) {
     if (updatedLearnMore.images) {
-      updatedLearnMore.images.forEach((image, index, self) => {
-        self[index] = ObjectID(image)
-      })
+      if (!Array.isArray(updatedLearnMore.images)) {
+        throw Error("The field images must be array")
+      }
+
+      try {
+        updatedLearnMore.images.forEach((image, index, self) => {
+          self[index] = ObjectID(image)
+        })
+      } catch {
+        throw Error("Not all elements under images are valid ObjectId")
+      }
     }
 
     if (updatedLearnMore.audio_files) {
-      updatedLearnMore.audio_files.forEach((audio, index, self) => {
-        self[index] = ObjectID(audio)
-      })
+      if (!Array.isArray(updatedLearnMore.audio_files)) {
+        throw Error("The field audio_files must be array")
+      }
+
+      try {
+        updatedLearnMore.audio_files.forEach((audio, index, self) => {
+          self[index] = ObjectID(audio)
+        })
+      } catch {
+        throw Error("Not all elements under audio_files are valid ObjectId")
+      }
     }
 
     if (updatedLearnMore.videos) {
-      updatedLearnMore.videos.forEach((video, index, self) => {
-        self[index] = ObjectID(video)
-      })
+      if (!Array.isArray(updatedLearnMore.videos)) {
+        throw Error("The field videos must be array")
+      }
+
+      try {
+        updatedLearnMore.videos.forEach((video, index, self) => {
+          self[index] = ObjectID(video)
+        })
+      } catch {
+        throw Error("Not all elements under videos are valid ObjectId")
+      }
     }
 
     if (updatedLearnMore.tags) {
-      updatedLearnMore.tags.forEach((tag, index, self) => {
-        self[index] = ObjectID(tag)
-      })
+      if (!Array.isArray(updatedLearnMore.tags)) {
+        throw Error("The field tags must be array")
+      }
+
+      try {
+        updatedLearnMore.tags.forEach((tag, index, self) => {
+          self[index] = ObjectID(tag)
+        })
+      } catch {
+        throw Error("Not all elements under tags are valid ObjectId")
+      }
     }
     
     if (updatedLearnMore.categories) {
-      updatedLearnMore.categories.forEach((category, index, self) => {
-        self[index] = ObjectID(category)
-      })
+      if (!Array.isArray(updatedLearnMore.categories)) {
+        throw Error("The field categories must be array")
+      }
+
+      try {
+        updatedLearnMore.categories.forEach((category, index, self) => {
+          self[index] = ObjectID(category)
+        })
+      } catch {
+        throw Error("Not all elements under categories are valid ObjectId")
+      }
     }
 
     if (updatedLearnMore.custom_fields) {
-      updatedLearnMore.custom_fields.forEach((custom_field, index, self) =>{
-        let temp = custom_field
-        temp._id = ObjectID(custom_field._id)
-        self[index] = temp
+      if (!Array.isArray(updatedLearnMore.custom_fields)) {
+        throw Error("The field custom_fields must be array")
+      }
+
+      updatedLearnMore.custom_fields.forEach((custom_field, index, self) => {
+        //Check if element is type object
+        if (!(typeof custom_field === 'object' && custom_field !== null)) {
+          throw Error("At least one of the custom_field is not of type object or is null")
+        }
+
+        if (!custom_field._id) {
+          throw Error("At least one of the custom_field is missing _id")
+        }
+
+        if (!custom_field.field_title) {
+          throw Error("At least one of the custom_field is missing field_title")
+        }
+
+        if (!custom_field.content) {
+          throw Error("At least one of the custom_field is missing content")
+        }
+
+        try {
+          let temp = custom_field
+          temp._id = ObjectID(custom_field._id)
+          self[index] = temp
+        } catch {
+          throw Error("A _id under custom_field is not valid ObjectId")
+        }
       })
     }
 
