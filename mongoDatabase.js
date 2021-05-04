@@ -751,7 +751,7 @@ module.exports = async function() {
         $group: {
           _id: '$_id',
           root: {$mergeObjects: '$$ROOT'},
-          revision_history: {$push: '$revision_history'}
+          revision_history: {$addToSet: '$revision_history'}
         }
       },
       {
@@ -1023,7 +1023,7 @@ module.exports = async function() {
         $group: {
           _id: '$_id',
           root: {$mergeObjects: '$$ROOT'},
-          revision_history: {$push: '$revision_history'}
+          revision_history: {$addToSet: '$revision_history'}
         }
       },
       {
@@ -1375,8 +1375,8 @@ module.exports = async function() {
         $group: {
           _id: '$_id',
           root: {$mergeObjects: '$$ROOT'},
-          plants: {$push: '$plants'},
-          revision_history: {$push: '$revision_history'},
+          plants: {$addToSet: '$plants'},
+          revision_history: {$addToSet: '$revision_history'},
         }
       },
       {
@@ -1753,8 +1753,8 @@ module.exports = async function() {
         $group: {
           _id: '$_id',
           root: {$mergeObjects: '$$ROOT'},
-          plants: {$push: '$plants'},
-          revision_history: {$push: '$revision_history'},
+          plants: {$addToSet: '$plants'},
+          revision_history: {$addToSet: '$revision_history'},
         }
       },
       {
@@ -2295,9 +2295,9 @@ module.exports = async function() {
         $group: {
           _id: '$_id',
           root: {$mergeObjects: '$$ROOT'},
-          plants: {$push: '$plants'},
-          waypoints: {$push: '$waypoints'},
-          revision_history: {$push: '$revision_history'},
+          plants: {$addToSet: '$plants'},
+          waypoints: {$addToSet: '$waypoints'},
+          revision_history: {$addToSet: '$revision_history'},
         }
       },
       {
@@ -2852,9 +2852,9 @@ module.exports = async function() {
         $group: {
           _id: '$_id',
           root: {$mergeObjects: '$$ROOT'},
-          plants: {$push: '$plants'},
-          waypoints: {$push: '$waypoints'},
-          revision_history: {$push: '$revision_history'},
+          plants: {$addToSet: '$plants'},
+          waypoints: {$addToSet: '$waypoints'},
+          revision_history: {$addToSet: '$revision_history'},
         }
       },
       {
@@ -3130,7 +3130,7 @@ module.exports = async function() {
           tags: {$first: '$tags'},
           categories: {$first: '$categories'},
           custom_fields: {$first: '$custom_fields'},
-          revision_history: {$push: '$revision_history'}
+          revision_history: {$addToSet: '$revision_history'}
         }
       },
       {
@@ -3370,7 +3370,7 @@ module.exports = async function() {
           tags: {$first: '$tags'},
           categories: {$first: '$categories'},
           custom_fields: {$first: '$custom_fields'},
-          revision_history: {$push: '$revision_history'}
+          revision_history: {$addToSet: '$revision_history'}
         }
       },
       {
