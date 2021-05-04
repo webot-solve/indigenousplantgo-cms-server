@@ -1397,7 +1397,15 @@ module.exports = async function() {
       }
     ]
 
-    return await waypoints.aggregate(aggregateOptions).toArray()
+    const tempWaypoints = await waypoints.aggregate(aggregateOptions).toArray()
+
+    tempWaypoints.forEach((waypoint, index, self) => {
+      if (!waypoint.plants[0]._id) {
+        self[index].plants = []
+      }
+    })
+
+    return tempWaypoints
   }
 
   //Create
@@ -1775,7 +1783,13 @@ module.exports = async function() {
       }
     ]
 
-    return await waypoints.aggregate(aggregateOptions).next()
+    const tempWaypoint = await waypoints.aggregate(aggregateOptions).next()
+
+    if (!tempWaypoint.plants[0]._id) {
+      tempWaypoint.plants = []
+    }
+
+    return tempWaypoint
   }
 
   //Update
@@ -2322,7 +2336,19 @@ module.exports = async function() {
       }
     ]
 
-    return await tours.aggregate(aggregateOptions).toArray()
+    const tempTours = await tours.aggregate(aggregateOptions).toArray()
+
+    tempTours.forEach((tour, index, self) => {
+      if (!tour.plants[0]._id) {
+        self[index].plants = []
+      }
+
+      if (!tour.waypoints[0]._id) {
+        self[index].waypoints = []
+      }
+    })
+
+    return tempTours
   }
 
   //Create
@@ -2879,7 +2905,17 @@ module.exports = async function() {
       }
     ]
 
-    return await tours.aggregate(aggregateOptions).next()
+    const tempTour = await tours.aggregate(aggregateOptions).next()
+
+    if (!tempTour.plants[0]._id) {
+      tempTour.plants = []
+    }
+
+    if (!tempTour.waypoints[0]._id) {
+      tempTour.waypoints = []
+    }
+
+    return tempTour
   }
 
   //Update
