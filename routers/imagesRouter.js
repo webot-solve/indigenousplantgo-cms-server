@@ -20,7 +20,7 @@ module.exports = function({database, authorize, verifyKey, upload, s3}) {
   router.post('/', authorize, verifyKey, upload.single('image'), async (req, res) => {
     try {
       const url = req.file ? req.file.location : null
-      const result = await database.createImage({url: url, updatedImage: req.body})
+      const result = await database.createImage({url: url, newImage: req.body})
       res.send(result.ops[0])
     } catch (error) {
       console.error(error)

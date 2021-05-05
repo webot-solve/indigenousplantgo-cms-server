@@ -20,7 +20,7 @@ module.exports = function({database, authorize, verifyKey, upload, s3}) {
   router.post('/', authorize, verifyKey, upload.single('video'), async (req, res) => {
     try {
       const url = req.file ? req.file.location : null
-      const result = await database.createVideo({url: url, updatedVideo: req.body})
+      const result = await database.createVideo({url: url, newVideo: req.body})
       res.send(result.ops[0])
     } catch (error) {
       console.error(error)

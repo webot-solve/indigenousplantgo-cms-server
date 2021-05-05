@@ -48,8 +48,35 @@ module.exports = async function() {
       throw Error("Requires an email")
     }
 
+    if (typeof email === 'string' || email instanceof String) {
+      const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      if(!(re.test(email.toLowerCase()))) {
+        throw Error("Email not formatted correctly")
+      }
+    } else {
+      throw Error("Email field must take a string")
+    }
+
+    if (user_name) {
+      if (!(typeof user_name === 'string' || user_name instanceof String)) {
+        throw Error("User_name field must take a string")
+      }
+    }
+
     if (!password) { //password can't be null
       throw Error("Requires a password")
+    }
+
+    if (!(typeof password === 'string' || password instanceof String)) {
+      throw Error("Password field must take a string")
+    }
+
+    if (typeof role === 'string' || role instanceof String) {
+      if (!(role === 'Manager' || role === 'Admin')) {
+        throw Error("Invalid role, role must be Manager or Admin")
+      }
+    } else {
+      throw Error("Role field must take a string")
     }
 
     //Hash password
@@ -75,6 +102,10 @@ module.exports = async function() {
     })
     if (!user) {
       throw Error("Invalid user")
+    }
+
+    if (!(typeof password === 'string' || password instanceof String)) {
+      throw Error("Password field must take a string")
     }
 
     const same = await bcrypt.compare(password, user.password)
@@ -104,9 +135,30 @@ module.exports = async function() {
           throw Error("Username or email is already taken")
         }
       }
+
+      if (updatedUser.email) {
+        if (typeof updatedUser.email === 'string' || updatedUser.email instanceof String) {
+          const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+          if(!(re.test(updatedUser.email.toLowerCase()))) {
+            throw Error("Email not formatted correctly")
+          }
+        } else {
+          throw Error("Email field must take a string")
+        }
+      }
+
+      if (updatedUser.user_name) {
+        if (!(typeof updatedUser.user_name === 'string' || updatedUser.user_name instanceof String)) {
+          throw Error("User_name field must take a string")
+        }
+      }
     }
 
     if (updatedUser.password) {
+      if (!(typeof updatedUser.password === 'string' || updatedUser.password instanceof String)) {
+        throw Error("Password field must take a string")
+      }
+
       //Hash password
       const encrypted = await bcrypt.hash(updatedUser.password, 12)
       updatedUser.password = encrypted
@@ -115,6 +167,14 @@ module.exports = async function() {
     if (updatedUser.role) {
       if (userRole !== "Admin") {
         throw Error("No permission to update role")
+      }
+
+      if (typeof updatedUser.role === 'string' || updatedUser.role instanceof String) {
+        if (!(updatedUser.role === 'Manager' || updatedUser.role === 'Admin')) {
+          throw Error("Invalid role, role must be Manager or Admin")
+        }
+      } else {
+        throw Error("Role field must take a string")
       }
     }
 
@@ -195,18 +255,22 @@ module.exports = async function() {
 
   //Create
   //Post /api/images
-  async function createImage({url, updatedImage}) {
+  async function createImage({url, newImage}) {
     if (!url) {
       throw Error("Missing image")
     }
 
-    if (!updatedImage.caption) {
+    if (!newImage.caption) {
       throw Error("Missing caption")
+    }
+
+    if (!(typeof newImage.caption === 'string' || newImage.caption instanceof String)) {
+      throw Error("Caption field must take a string")
     }
 
     const result = await images.insertOne({
       image_url: url,
-      ...updatedImage
+      ...newImage
     })
     return result
   }
@@ -242,6 +306,12 @@ module.exports = async function() {
           image_url: url
         }}
       )
+    }
+
+    if (updatedImage.caption) {
+      if (!(typeof updatedImage.caption === 'string' || updatedImage.caption instanceof String)) {
+        throw Error("Caption field must take a string")
+      }
     }
 
     const result = await images.findOneAndUpdate(
@@ -289,18 +359,22 @@ module.exports = async function() {
 
   //Create
   //Post /api/audios
-  async function createAudio({url, updatedAudio}) {
+  async function createAudio({url, newAudio}) {
     if (!url) {
       throw Error("Missing audio")
     }
 
-    if (!updatedAudio.caption) {
+    if (!newAudio.caption) {
       throw Error("Missing caption")
+    }
+
+    if (!(typeof newAudio.caption === 'string' || newAudio.caption instanceof String)) {
+      throw Error("Caption field must take a string")
     }
 
     const result = await audios.insertOne({
       audio_file_url: url,
-      ...updatedAudio
+      ...newAudio
     })
     return result
   }
@@ -336,6 +410,12 @@ module.exports = async function() {
           audio_file_url: url
         }}
       )
+    }
+
+    if (updatedAudio.caption) {
+      if (!(typeof updatedAudio.caption === 'string' || updatedAudio.caption instanceof String)) {
+        throw Error("Caption field must take a string")
+      }
     }
 
     const result = await audios.findOneAndUpdate(
@@ -383,18 +463,22 @@ module.exports = async function() {
 
   //Create
   //Post /api/videos
-  async function createVideo({url, updatedVideo}) {
+  async function createVideo({url, newVideo}) {
     if (!url) {
       throw Error("Missing video")
     }
 
-    if (!updatedVideo.caption) {
+    if (!newVideo.caption) {
       throw Error("Missing caption")
+    }
+
+    if (!(typeof newVideo.caption === 'string' || newVideo.caption instanceof String)) {
+      throw Error("Caption field must take a string")
     }
 
     const result = await videos.insertOne({
       video_url: url,
-      ...updatedVideo
+      ...newVideo
     })
     return result
   }
@@ -430,6 +514,12 @@ module.exports = async function() {
           video_url: url
         }}
       )
+    }
+
+    if (updatedVideo.caption) {
+      if (!(typeof updatedVideo.caption === 'string' || updatedVideo.caption instanceof String)) {
+        throw Error("Caption field must take a string")
+      }
     }
 
     const result = await videos.findOneAndUpdate(
@@ -482,6 +572,10 @@ module.exports = async function() {
       throw Error("Require a tag name")
     }
 
+    if (!(typeof tag_name === 'string' || tag_name instanceof String)) {
+      throw Error("Tag_name field must take a string")
+    }
+
     const result = await tags.insertOne({
       tag_name
     })
@@ -497,6 +591,12 @@ module.exports = async function() {
   //Update
   //PUT /api/tags/:tagId
   async function updateTag({tagId, updatedTag}) {
+    if (updatedTag.tag_name) {
+      if (!(typeof updatedTag.tag_name === 'string' || updatedTag.tag_name instanceof String)) {
+        throw Error("Tag_name field must take a string")
+      }
+    }
+
     const result = await tags.findOneAndUpdate(
       {_id: ObjectID(tagId)},
       {$set: {...updatedTag}}
@@ -528,8 +628,20 @@ module.exports = async function() {
       throw Error("Require a category name")
     }
 
+    if (!(typeof category_name === 'string' || category_name instanceof String)) {
+      throw Error("Category_name field must take a string")
+    }
+
     if (!resource) {
       throw Error("Require a resource")
+    }
+
+    if (typeof resource === 'string' || resource instanceof String) {
+      if (!(resource === 'plant' || resource === 'waypoint' || resource === 'tour' || resource === 'learn_more')) {
+        throw Error("Invalid resource, resource must be plant, waypoint, tour, or learn_more")
+      }
+    } else {
+      throw Error("Resource field must take a string")
     }
 
     const result = await categories.insertOne({
@@ -548,6 +660,22 @@ module.exports = async function() {
   //Update
   //PUT /api/categories/:categoryId
   async function updateCategory({categoryId, updatedCategory}) {
+    if (updatedCategory.category_name) {
+      if (!(typeof updatedCategory.category_name === 'string' || updatedCategory.category_name instanceof String)) {
+        throw Error("Category_name field must take a string")
+      }
+    }
+
+    if (updatedCategory.resource) {
+      if (typeof updatedCategory.resource === 'string' || updatedCategory.resource instanceof String) {
+        if (!(updatedCategory.resource === 'plant' || updatedCategory.resource === 'waypoint' || updatedCategory.resource === 'tour' || updatedCategory.resource === 'learn_more')) {
+          throw Error("Invalid resource, resource must be plant, waypoint, tour, or learn_more")
+        }
+      } else {
+        throw Error("Resource field must take a string")
+      }
+    }
+
     const result = await categories.findOneAndUpdate(
       {_id: ObjectID(categoryId)},
       {$set: {...updatedCategory}}
@@ -585,12 +713,28 @@ module.exports = async function() {
       throw Error("Require a location name")
     }
 
+    if (!(typeof location_name === 'string' || location_name instanceof String)) {
+      throw Error("Location_name field must take a string")
+    }
+
     if (!longitude) {
       throw Error("Require a longtitude")
     }
 
+    if (!(typeof longitude === 'number' && !Number.isNaN(longitude))) {
+      throw Error("Longitude field must take a number")
+    }
+
     if (!latitude) {
-      throw Error("Require a longtitude")
+      throw Error("Require a latitude")
+    }
+
+    if (!(typeof latitude === 'number' && !Number.isNaN(latitude))) {
+      throw Error("Latitude field must take a number")
+    }
+
+    if (!(typeof description === 'string' || description instanceof String)) {
+      throw Error("Description field must take a string")
     }
 
     const result = await locations.insertOne({
@@ -611,6 +755,30 @@ module.exports = async function() {
   //Update
   //PUT /api/locations/:locationId
   async function updateLocation({locationId, updatedLocation}) {
+    if (updatedLocation.location_name) {
+      if (!(typeof updatedLocation.location_name === 'string' || updatedLocation.location_name instanceof String)) {
+        throw Error("Location_name field must take a string")
+      }
+    }
+
+    if (updatedLocation.longitude) {
+      if (!(typeof updatedLocation.longitude === 'number' && !Number.isNaN(updatedLocation.longitude))) {
+        throw Error("Longitude field must take a number")
+      }
+    }
+
+    if (updatedLocation.latitude) {
+      if (!(typeof updatedLocation.latitude === 'number' && !Number.isNaN(updatedLocation.latitude))) {
+        throw Error("Latitude field must take a number")
+      }
+    }
+
+    if (updatedLocation.description) {
+      if (!(typeof updatedLocation.description === 'string' || updatedLocation.description instanceof String)) {
+        throw Error("Description field must take a string")
+      }
+    }
+
     const result = await locations.findOneAndUpdate(
       {_id: ObjectID(locationId)},
       {$set: {...updatedLocation}}
@@ -781,12 +949,24 @@ module.exports = async function() {
       throw Error("Missing plant name")
     }
 
+    if (!(typeof newPlant.plant_name === 'string' || newPlant.plant_name instanceof String)) {
+      throw Error("Plant_name field must take a string")
+    }
+
     if (!newPlant.scientific_name) {
       throw Error("Missing scientific name")
     }
 
+    if (!(typeof newPlant.scientific_name === 'string' || newPlant.scientific_name instanceof String)) {
+      throw Error("Scientific_name field must take a string")
+    }
+
     if (!newPlant.description) {
       throw Error("Missing description")
+    }
+
+    if (!(typeof newPlant.description === 'string' || newPlant.description instanceof String)) {
+      throw Error("Description field must take a string")
     }
 
     //Convert all passed in array of id to ObjectId
@@ -1048,6 +1228,24 @@ module.exports = async function() {
   //Update
   //PUT /api/plants/:plantId
   async function updatePlant({plantId, updatedPlant, user_id}) {
+    if (updatedPlant.plant_name) {
+      if (!(typeof updatedPlant.plant_name === 'string' || updatedPlant.plant_name instanceof String)) {
+        throw Error("Plant_name field must take a string")
+      }
+    }
+
+    if (updatedPlant.scientific_name) {
+      if (!(typeof updatedPlant.scientific_name === 'string' || updatedPlant.scientific_name instanceof String)) {
+        throw Error("Scientific_name field must take a string")
+      }
+    }
+
+    if (updatedPlant.description) {
+      if (!(typeof updatedPlant.description === 'string' || updatedPlant.description instanceof String)) {
+        throw Error("Description field must take a string")
+      }
+    }
+
     //Convert all passed in array of id to ObjectId
     //User should get data of the plant when they start editing
     if (updatedPlant.images) {
@@ -1416,8 +1614,16 @@ module.exports = async function() {
       throw Error("Missing waypoint name")
     }
 
+    if (!(typeof newWaypoint.waypoint_name === 'string' || newWaypoint.waypoint_name instanceof String)) {
+      throw Error("Waypoint_name field must take a string")
+    }
+
     if (!newWaypoint.description) {
       throw Error("Missing description")
+    }
+
+    if (!(typeof newWaypoint.description === 'string' || newWaypoint.description instanceof String)) {
+      throw Error("Description field must take a string")
     }
 
     //Convert all passed in array of id to ObjectId
@@ -1795,6 +2001,18 @@ module.exports = async function() {
   //Update
   //PUT /api/waypoints/:waypointId
   async function updateWaypoint({waypointId, updatedWaypoint, user_id}) {
+    if (updatedWaypoint.waypoint_name) {
+      if (!(typeof updatedWaypoint.waypoint_name === 'string' || updatedWaypoint.waypoint_name instanceof String)) {
+        throw Error("Waypoint_name field must take a string")
+      }
+    }
+
+    if (updatedWaypoint.description) {
+      if (!(typeof updatedWaypoint.description === 'string' || updatedWaypoint.description instanceof String)) {
+        throw Error("Description field must take a string")
+      }
+    }
+
     //Convert all passed in array of id to ObjectId
     //User should get data of the waypoint when they start editing
     if (updatedWaypoint.images) {
@@ -2359,8 +2577,16 @@ module.exports = async function() {
       throw Error("Missing tour name")
     }
 
+    if (!(typeof newTour.tour_name === 'string' || newTour.tour_name instanceof String)) {
+      throw Error("Tour_name field must take a string")
+    }
+
     if (!newTour.description) {
       throw Error("Missing description")
+    }
+
+    if (!(typeof newTour.description === 'string' || newTour.description instanceof String)) {
+      throw Error("Description field must take a string")
     }
 
     //Convert all passed in array of id to ObjectId
@@ -2921,6 +3147,18 @@ module.exports = async function() {
   //Update
   //PUT /api/tours/:tourId
   async function updateTour({tourId, updatedTour, user_id}) {
+    if (updatedTour.tour_name) {
+      if (!(typeof updatedTour.tour_name === 'string' || updatedTour.tour_name instanceof String)) {
+        throw Error("Tour_name field must take a string")
+      }
+    }
+
+    if (updatedTour.description) {
+      if (!(typeof updatedTour.description === 'string' || updatedTour.description instanceof String)) {
+        throw Error("Description field must take a string")
+      }
+    }
+
     //Convert all passed in array of id to ObjectId
     //User should get data of the tour when they start editing
     if (updatedTour.images) {
@@ -3188,8 +3426,16 @@ module.exports = async function() {
       throw Error("Missing title")
     }
 
+    if (!(typeof newLearnMore.learn_more_title === 'string' || newLearnMore.learn_more_title instanceof String)) {
+      throw Error("Learn_more_title field must take a string")
+    }
+
     if (!newLearnMore.description) {
       throw Error("Missing description")
+    }
+
+    if (!(typeof newLearnMore.description === 'string' || newLearnMore.description instanceof String)) {
+      throw Error("Description field must take a string")
     }
    
     if (newLearnMore.images) {
@@ -3423,6 +3669,18 @@ module.exports = async function() {
   //Update
   //PUT /api/learn_more/:learnMoreId
   async function updateLearnMore({learnMoreId, updatedLearnMore, user_id}) {
+    if (updatedLearnMore.learn_more_title) {
+      if (!(typeof updatedLearnMore.learn_more_title === 'string' || updatedLearnMore.learn_more_title instanceof String)) {
+        throw Error("Learn_more_title field must take a string")
+      }
+    }
+
+    if (updatedLearnMore.description) {
+      if (!(typeof updatedLearnMore.description === 'string' || updatedLearnMore.description instanceof String)) {
+        throw Error("Description field must take a string")
+      }
+    }
+
     if (updatedLearnMore.images) {
       if (!Array.isArray(updatedLearnMore.images)) {
         throw Error("The field images must be array")
