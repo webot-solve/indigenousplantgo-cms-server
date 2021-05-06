@@ -3,9 +3,21 @@ const express = require('express')
 module.exports = function({database, authorize, verifyKey}) {
   const router = express.Router()
 
-  //Get All
+  //Get All (published ones)
   //GET /api/plants?key=<API_KEY>
   router.get('/', verifyKey, async (req, res) => {
+    try {
+      const result = await database.getPublishedPlants()
+      res.send(result)
+    } catch (error) {
+      console.error(error)
+      res.status(401).send({error: error.message})
+    }
+  })
+
+  //Get All plants include none published ones
+  //GET /api/plants/all?key=<API_KEY>
+  router.get('/all', verifyKey, async (req, res) => {
     try {
       const result = await database.getPlants()
       res.send(result)

@@ -835,7 +835,7 @@ module.exports = async function() {
   //Plant
 
   //Get All
-  //GET /api/plants
+  //GET /api/plants/all
   async function getPlants() {
     //Fields like images must be array of ObjectId
     //Should convert all the ObjectId array to array of their respective item
@@ -933,6 +933,119 @@ module.exports = async function() {
         $project: {
           'revision_history.user.password': 0,
           'revision_history.user.role': 0,
+          root: 0
+        }
+      }
+    ]
+
+    return await plants.aggregate(aggregateOptions).toArray()
+  }
+
+  //Get All published plants
+  //GET /api/plants
+  async function getPublishedPlants() {
+    //Fields like images must be array of ObjectId
+    //Should convert all the ObjectId array to array of their respective item
+    const aggregateOptions = [
+      {
+        $match: {
+          isPublish: true
+        }
+      },
+      {
+        $lookup: {
+          from: 'images',
+          localField: 'images',
+          foreignField: '_id',
+          as: 'images'
+        }
+      },
+      {
+        $lookup: {
+          from: 'audios',
+          localField: 'audio_files',
+          foreignField: '_id',
+          as: 'audio_files'
+        }
+      },
+      {
+        $lookup: {
+          from: 'videos',
+          localField: 'videos',
+          foreignField: '_id',
+          as: 'videos'
+        }
+      },
+      {
+        $lookup: {
+          from: 'tags',
+          localField: 'tags',
+          foreignField: '_id',
+          as: 'tags'
+        }
+      },
+      {
+        $lookup: {
+          from: 'categories',
+          localField: 'categories',
+          foreignField: '_id',
+          as: 'categories'
+        }
+      },
+      {
+        $lookup: {
+          from: 'locations',
+          localField: 'locations',
+          foreignField: '_id',
+          as: 'locations'
+        }
+      },
+      {
+        $lookup: {
+          from: 'revisions',
+          localField: 'revision_history',
+          foreignField: '_id',
+          as: 'revision_history'
+        }
+      },
+      {
+        $unwind: {
+          path: '$revision_history',
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $sort: {
+          'revision_history.date': -1
+        }
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'revision_history.user',
+          foreignField: '_id',
+          as: 'revision_history.user'
+        }
+      },
+      {
+        $group: {
+          _id: '$_id',
+          root: {$mergeObjects: '$$ROOT'},
+          revision_history: {$addToSet: '$revision_history'}
+        }
+      },
+      {
+        $replaceRoot: {
+          newRoot: {
+            $mergeObjects: ['$root', '$$ROOT']
+          }
+        }
+      },
+      {
+        $project: {
+          'revision_history.user.password': 0,
+          'revision_history.user.role': 0,
+          'isPublish': 0,
           root: 0
         }
       }
@@ -1103,6 +1216,9 @@ module.exports = async function() {
     } else {
       newPlant.custom_fields = []
     }
+
+    //New plant start off not published
+    newPlant.isPublish = false
 
     //New revision for when plant is created
     const revision = await createRevision({user_id: user_id})
@@ -1365,6 +1481,12 @@ module.exports = async function() {
         }
       })
     }
+
+    if (updatedPlant.isPublish) {
+      if (!(typeof updatedPlant.isPublish === 'boolean')) {
+        throw Error("IsPublish field must take a boolean")
+      }
+    }
    
     //New revision for when plant is updated
     const revision = await createRevision({user_id: user_id})
@@ -1397,7 +1519,7 @@ module.exports = async function() {
   //Waypoint
 
   //Get All
-  //GET /api/waypoints
+  //GET /api/waypoints/all
   async function getWaypoints() {
     //Fields like images must be array of ObjectId
     //Should convert all the ObjectId array to array of their respective item
@@ -1606,6 +1728,223 @@ module.exports = async function() {
     return tempWaypoints
   }
 
+  //Get All published waypoints
+  //GET /api/waypoints
+  async function getPublishedWaypoints() {
+    //Fields like images must be array of ObjectId
+    //Should convert all the ObjectId array to array of their respective item
+    const aggregateOptions = [
+      {
+        $match: {
+          isPublish: true
+        }
+      },
+      {
+        $lookup: {
+          from: 'images',
+          localField: 'images',
+          foreignField: '_id',
+          as: 'images'
+        }
+      },
+      {
+        $lookup: {
+          from: 'audios',
+          localField: 'audio_files',
+          foreignField: '_id',
+          as: 'audio_files'
+        }
+      },
+      {
+        $lookup: {
+          from: 'videos',
+          localField: 'videos',
+          foreignField: '_id',
+          as: 'videos'
+        }
+      },
+      {
+        $lookup: {
+          from: 'tags',
+          localField: 'tags',
+          foreignField: '_id',
+          as: 'tags'
+        }
+      },
+      {
+        $lookup: {
+          from: 'categories',
+          localField: 'categories',
+          foreignField: '_id',
+          as: 'categories'
+        }
+      },
+      {
+        $lookup: {
+          from: 'locations',
+          localField: 'locations',
+          foreignField: '_id',
+          as: 'locations'
+        }
+      },
+      //Plant
+      {
+        $lookup: {
+          from: 'plants',
+          localField: 'plants',
+          foreignField: '_id',
+          as: 'plants'
+        }
+      },
+      {
+        $unwind: {
+          path: '$plants',
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $lookup: {
+          from: 'images',
+          localField: 'plants.images',
+          foreignField: '_id',
+          as: 'plants.images'
+        }
+      },
+      {
+        $lookup: {
+          from: 'audios',
+          localField: 'plants.audio_files',
+          foreignField: '_id',
+          as: 'plants.audio_files'
+        }
+      },
+      {
+        $lookup: {
+          from: 'videos',
+          localField: 'plants.videos',
+          foreignField: '_id',
+          as: 'plants.videos'
+        }
+      },
+      {
+        $lookup: {
+          from: 'tags',
+          localField: 'plants.tags',
+          foreignField: '_id',
+          as: 'plants.tags'
+        }
+      },
+      {
+        $lookup: {
+          from: 'categories',
+          localField: 'plants.categories',
+          foreignField: '_id',
+          as: 'plants.categories'
+        }
+      },
+      {
+        $lookup: {
+          from: 'locations',
+          localField: 'plants.locations',
+          foreignField: '_id',
+          as: 'plants.locations'
+        }
+      },
+      //Plant Revision
+      {
+        $lookup: {
+          from: 'revisions',
+          localField: 'plants.revision_history',
+          foreignField: '_id',
+          as: 'plants.revision_history'
+        }
+      },
+      // {
+      //   $unwind: {
+      //     path: '$plants.revision_history',
+      //     preserveNullAndEmptyArrays: true
+      //   }
+      // },
+      // {
+      //   $sort: {
+      //     'plants.revision_history.date': -1
+      //   }
+      // },
+      // {
+      //   $lookup: {
+      //     from: 'users',
+      //     localField: 'plants.revision_history.user',
+      //     foreignField: '_id',
+      //     as: 'plants.revision_history.user'
+      //   }
+      // },
+      //Revision
+      {
+        $lookup: {
+          from: 'revisions',
+          localField: 'revision_history',
+          foreignField: '_id',
+          as: 'revision_history'
+        }
+      },
+      {
+        $unwind: {
+          path: '$revision_history',
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $sort: {
+          'revision_history.date': -1
+        }
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'revision_history.user',
+          foreignField: '_id',
+          as: 'revision_history.user'
+        }
+      },
+      {
+        $group: {
+          _id: '$_id',
+          root: {$mergeObjects: '$$ROOT'},
+          plants: {$addToSet: '$plants'},
+          revision_history: {$addToSet: '$revision_history'},
+        }
+      },
+      {
+        $replaceRoot: {
+          newRoot: {
+            $mergeObjects: ['$root', '$$ROOT']
+          }
+        }
+      },
+      {
+        $project: {
+          'plants.revision_history.user.password': 0,
+          'plants.revision_history.user.role': 0,
+          'plants.isPublish': 0,
+          'revision_history.user.password': 0,
+          'revision_history.user.role': 0,
+          'isPublish': 0,
+          root: 0
+        }
+      }
+    ]
+
+    const tempWaypoints = await waypoints.aggregate(aggregateOptions).toArray()
+
+    tempWaypoints.forEach((waypoint, index, self) => {
+      if (!waypoint.plants[0]._id) {
+        self[index].plants = []
+      }
+    })
+
+    return tempWaypoints
+  }
+
   //Create
   //POST /api/waypoints
   async function createWaypoint({newWaypoint, user_id}) {
@@ -1775,6 +2114,9 @@ module.exports = async function() {
     } else {
       newWaypoint.custom_fields = []
     }
+
+    //New waypoint start off not published
+    newWaypoint.isPublish = false
 
     //New revision for when waypoint is created
     const revision = await createRevision({user_id: user_id})
@@ -2144,6 +2486,12 @@ module.exports = async function() {
           throw Error("A _id under custom_field is not valid ObjectId")
         }
       })
+    }
+
+    if (updatedWaypoint.isPublish) {
+      if (!(typeof updatedWaypoint.isPublish === 'boolean')) {
+        throw Error("IsPublish field must take a boolean")
+      }
     }
 
     //New revision for when waypoint is updated
@@ -3864,12 +4212,14 @@ module.exports = async function() {
     deleteRevision,
     //Plant
     getPlants,
+    getPublishedPlants,
     createPlant,
     getPlant,
     updatePlant,
     deletePlant,
     //Waypoint
     getWaypoints,
+    getPublishedWaypoints,
     createWaypoint,
     getWaypoint,
     updateWaypoint,
