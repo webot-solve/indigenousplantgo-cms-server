@@ -17,10 +17,9 @@ module.exports = function({database, authorize, verifyKey, upload, s3}) {
 
   //Create
   //POST /api/videos?key=<API_KEY>
-  router.post('/', authorize, verifyKey, upload.single('video'), async (req, res) => {
+  router.post('/', authorize, verifyKey, async (req, res) => {
     try {
-      const url = req.file ? req.file.location : null
-      const result = await database.createVideo({url: url, newVideo: req.body})
+      const result = await database.createVideo({newVideo: req.body})
       res.send(result.ops[0])
     } catch (error) {
       console.error(error)
@@ -43,11 +42,10 @@ module.exports = function({database, authorize, verifyKey, upload, s3}) {
 
   //Update
   //PUT /api/videos/:videoId?key=<API_KEY>
-  router.put('/:videoId', authorize, verifyKey, upload.single('video'), async (req, res) => {
+  router.put('/:videoId', authorize, verifyKey, async (req, res) => {
     try {
-      const url = req.file ? req.file.location : null
       const videoId = req.params.videoId
-      const result = await database.updateVideo({videoId, url: url, updatedVideo: req.body, s3})
+      const result = await database.updateVideo({videoId, updatedVideo: req.body})
       res.send("Video updated")
     } catch (error) {
       console.error(error)

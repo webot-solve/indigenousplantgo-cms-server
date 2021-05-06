@@ -463,10 +463,20 @@ module.exports = async function() {
 
   //Create
   //Post /api/videos
-  async function createVideo({url, newVideo}) {
-    if (!url) {
+  async function createVideo({newVideo}) {
+    if (!newVideo.video_url) {
       throw Error("Missing video")
     }
+
+    if (typeof newVideo.video_url === 'string' || newVideo.video_url instanceof String) {
+      const re = /^(https?\:\/\/)?(www\.youtube\.com|youtu\.?be)\/.+$/
+      if(!(re.test(newVideo.video_url.toLowerCase()))) {
+        throw Error("Video url not formatted correctly")
+      }
+    } else {
+      throw Error("Video_url field must take a string")
+    }
+    
 
     if (!newVideo.caption) {
       throw Error("Missing caption")
@@ -477,7 +487,6 @@ module.exports = async function() {
     }
 
     const result = await videos.insertOne({
-      video_url: url,
       ...newVideo
     })
     return result
@@ -491,29 +500,16 @@ module.exports = async function() {
 
   //Update
   //PUT /api/videos/:videoId
-  async function updateVideo({videoId, url, updatedVideo, s3}) {
-    //There is a new url, delete the old one from s3
-    if (url) {
-      const video = await videos.findOne({_id: ObjectID(videoId)})
-      if (video.video_url) {
-        s3.deleteObject({
-          Bucket: process.env.AWS_BUCKET_NAME,
-          Key: video.video_url.split(".com/")[1]
-        }, function(err, data) {
-          if (err) {
-            console.log(err)
-          } else {
-            console.log("Success")
-          }
-        })
+  async function updateVideo({videoId, updatedVideo}) {
+    if (updatedVideo.video_url) {
+      if (typeof updatedVideo.video_url === 'string' || updatedVideo.video_url instanceof String) {
+        const re = /^(https?\:\/\/)?(www\.youtube\.com|youtu\.?be)\/.+$/
+        if(!(re.test(updatedVideo.video_url.toLowerCase()))) {
+          throw Error("Video url not formatted correctly")
+        }
+      } else {
+        throw Error("Video_url field must take a string")
       }
-
-      await videos.findOneAndUpdate(
-        {_id: ObjectID(videoId)},
-        {$set: {
-          video_url: url
-        }}
-      )
     }
 
     if (updatedVideo.caption) {
