@@ -51,10 +51,10 @@ module.exports = async function() {
     if (typeof email === 'string' || email instanceof String) {
       const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
       if(!(re.test(email.toLowerCase()))) {
-        throw Error("Email not formatted correctly")
+        throw Error("Incorrectly formatted email")
       }
     } else {
-      throw Error("Email field must take a string")
+      throw Error("Invalid input for email")
     }
 
     if (!user_name) {
@@ -62,7 +62,7 @@ module.exports = async function() {
     }
 
     if (!(typeof user_name === 'string' || user_name instanceof String)) {
-      throw Error("User_name field must take a string")
+      throw Error("Invalid input for user_name")
     }
 
     if (!password) { //password can't be null
@@ -70,7 +70,7 @@ module.exports = async function() {
     }
 
     if (!(typeof password === 'string' || password instanceof String)) {
-      throw Error("Password field must take a string")
+      throw Error("Invalid input for password")
     }
 
     if (typeof role === 'string' || role instanceof String) {
@@ -78,7 +78,7 @@ module.exports = async function() {
         throw Error("Invalid role, role must be Manager or Admin")
       }
     } else {
-      throw Error("Role field must take a string")
+      throw Error("Invalid input for role")
     }
 
     //Hash password
@@ -107,7 +107,7 @@ module.exports = async function() {
     }
 
     if (!(typeof password === 'string' || password instanceof String)) {
-      throw Error("Password field must take a string")
+      throw Error("Invalid input for password")
     }
 
     const same = await bcrypt.compare(password, user.password)
@@ -144,10 +144,10 @@ module.exports = async function() {
     if (typeof updatedUser.email === 'string' || updatedUser.email instanceof String) {
       const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
       if(!(re.test(updatedUser.email.toLowerCase()))) {
-        throw Error("Email not formatted correctly")
+        throw Error("Incorrectly formatted email")
       }
     } else {
-      throw Error("Email field must take a string")
+      throw Error("Invalid input for email")
     }
 
     if (!updatedUser.user_name) {
@@ -156,7 +156,7 @@ module.exports = async function() {
 
     if (updatedUser.user_name) {
       if (!(typeof updatedUser.user_name === 'string' || updatedUser.user_name instanceof String)) {
-        throw Error("User_name field must take a string")
+        throw Error("Invalid input for user_name")
       }
     }
 
@@ -165,7 +165,7 @@ module.exports = async function() {
     }
 
     if (!(typeof updatedUser.password === 'string' || updatedUser.password instanceof String)) {
-      throw Error("Password field must take a string")
+      throw Error("Invalid input for password")
     }
 
     //Hash password
@@ -182,7 +182,7 @@ module.exports = async function() {
           throw Error("Invalid role, role must be Manager or Admin")
         }
       } else {
-        throw Error("Role field must take a string")
+        throw Error("Invalid input for role")
       }
     }
 
@@ -241,7 +241,7 @@ module.exports = async function() {
       from: process.env.SENDER_EMAIL,
       to: email,
       subject: 'Password reset',
-      text: `Your recovery password is: ${recoveryPassword}`
+      text: `Dear ${user.user_name},\nYou have made a password recover/reset request to indigenous plant.\nYour recovery password is: ${recoveryPassword}`
     }
 
     transporter.sendMail(mailOptions, (error, info) => {
@@ -273,7 +273,7 @@ module.exports = async function() {
     }
 
     if (!(typeof newImage.caption === 'string' || newImage.caption instanceof String)) {
-      throw Error("Caption field must take a string")
+      throw Error("Invalid input for caption")
     }
 
     const result = await images.insertOne({
@@ -321,7 +321,7 @@ module.exports = async function() {
     }
 
     if (!(typeof updatedImage.caption === 'string' || updatedImage.caption instanceof String)) {
-      throw Error("Caption field must take a string")
+      throw Error("Invalid input for caption")
     }
 
     const result = await images.findOneAndUpdate(
@@ -379,7 +379,7 @@ module.exports = async function() {
     }
 
     if (!(typeof newAudio.caption === 'string' || newAudio.caption instanceof String)) {
-      throw Error("Caption field must take a string")
+      throw Error("Invalid input for caption")
     }
 
     const result = await audios.insertOne({
@@ -427,7 +427,7 @@ module.exports = async function() {
     }
 
     if (!(typeof updatedAudio.caption === 'string' || updatedAudio.caption instanceof String)) {
-      throw Error("Caption field must take a string")
+      throw Error("Invalid input for caption")
     }
 
     const result = await audios.findOneAndUpdate(
@@ -483,10 +483,10 @@ module.exports = async function() {
     if (typeof newVideo.video_url === 'string' || newVideo.video_url instanceof String) {
       const re = /^(https?\:\/\/)?(www\.youtube\.com|youtu\.?be)\/.+$/
       if(!(re.test(newVideo.video_url.toLowerCase()))) {
-        throw Error("Video url not formatted correctly")
+        throw Error("Incorrectly formatted video url")
       }
     } else {
-      throw Error("Video_url field must take a string")
+      throw Error("Invalid input for video_url")
     }
 
     if (!newVideo.caption) {
@@ -494,7 +494,7 @@ module.exports = async function() {
     }
 
     if (!(typeof newVideo.caption === 'string' || newVideo.caption instanceof String)) {
-      throw Error("Caption field must take a string")
+      throw Error("Invalid input for caption")
     }
 
     const result = await videos.insertOne({
@@ -519,10 +519,10 @@ module.exports = async function() {
     if (typeof updatedVideo.video_url === 'string' || updatedVideo.video_url instanceof String) {
       const re = /^(https?\:\/\/)?(www\.youtube\.com|youtu\.?be)\/.+$/
       if(!(re.test(updatedVideo.video_url.toLowerCase()))) {
-        throw Error("Video url not formatted correctly")
+        throw Error("Incorrectly formatted video url")
       }
     } else {
-      throw Error("Video_url field must take a string")
+      throw Error("Invalid input for video_url")
     }
 
     if (!updatedVideo.caption) {
@@ -530,7 +530,7 @@ module.exports = async function() {
     }
 
     if (!(typeof updatedVideo.caption === 'string' || updatedVideo.caption instanceof String)) {
-      throw Error("Caption field must take a string")
+      throw Error("Invalid input for caption")
     }
 
     const result = await videos.findOneAndUpdate(
@@ -584,7 +584,7 @@ module.exports = async function() {
     }
 
     if (!(typeof tag_name === 'string' || tag_name instanceof String)) {
-      throw Error("Tag_name field must take a string")
+      throw Error("Invalid input for tag_name")
     }
 
     const result = await tags.insertOne({
@@ -607,7 +607,7 @@ module.exports = async function() {
     }
 
     if (!(typeof updatedTag.tag_name === 'string' || updatedTag.tag_name instanceof String)) {
-      throw Error("Tag_name field must take a string")
+      throw Error("Invalid input for tag_name")
     }
 
     const result = await tags.findOneAndUpdate(
@@ -642,7 +642,7 @@ module.exports = async function() {
     }
 
     if (!(typeof category_name === 'string' || category_name instanceof String)) {
-      throw Error("Category_name field must take a string")
+      throw Error("Invalid input for category_name")
     }
 
     if (!resource) {
@@ -654,7 +654,7 @@ module.exports = async function() {
         throw Error("Invalid resource, resource must be plant, waypoint, tour, or learn_more")
       }
     } else {
-      throw Error("Resource field must take a string")
+      throw Error("Invalid input for resource")
     }
 
     const result = await categories.insertOne({
@@ -678,7 +678,7 @@ module.exports = async function() {
     }
 
     if (!(typeof updatedCategory.category_name === 'string' || updatedCategory.category_name instanceof String)) {
-      throw Error("Category_name field must take a string")
+      throw Error("Invalid input for category_name")
     }
 
     if (!updatedCategory.resource) {
@@ -690,7 +690,7 @@ module.exports = async function() {
         throw Error("Invalid resource, resource must be plant, waypoint, tour, or learn_more")
       }
     } else {
-      throw Error("Resource field must take a string")
+      throw Error("Invalid input for resource")
     }
 
     const result = await categories.findOneAndUpdate(
@@ -731,7 +731,7 @@ module.exports = async function() {
     }
 
     if (!(typeof location_name === 'string' || location_name instanceof String)) {
-      throw Error("Location_name field must take a string")
+      throw Error("Invalid input for location_name")
     }
 
     if (longitude == null) {
@@ -739,7 +739,7 @@ module.exports = async function() {
     }
 
     if (!(typeof longitude === 'number' && !Number.isNaN(longitude))) {
-      throw Error("Longitude field must take a number")
+      throw Error("Invalid input for longitude")
     }
 
     if (latitude == null) {
@@ -747,11 +747,11 @@ module.exports = async function() {
     }
 
     if (!(typeof latitude === 'number' && !Number.isNaN(latitude))) {
-      throw Error("Latitude field must take a number")
+      throw Error("Invalid input for latitude")
     }
 
     if (!(typeof description === 'string' || description instanceof String)) {
-      throw Error("Description field must take a string")
+      throw Error("Invalid input for description")
     }
 
     const result = await locations.insertOne({
@@ -777,7 +777,7 @@ module.exports = async function() {
     }
 
     if (!(typeof updatedLocation.location_name === 'string' || updatedLocation.location_name instanceof String)) {
-      throw Error("Location_name field must take a string")
+      throw Error("Invalid input for location_name")
     }
 
     if (updatedLocation.longitude == null) {
@@ -785,7 +785,7 @@ module.exports = async function() {
     }
 
     if (!(typeof updatedLocation.longitude === 'number' && !Number.isNaN(updatedLocation.longitude))) {
-      throw Error("Longitude field must take a number")
+      throw Error("Invalid input for longitude")
     }
 
     if (updatedLocation.latitude == null) {
@@ -794,13 +794,13 @@ module.exports = async function() {
 
     if (updatedLocation.latitude) {
       if (!(typeof updatedLocation.latitude === 'number' && !Number.isNaN(updatedLocation.latitude))) {
-        throw Error("Latitude field must take a number")
+        throw Error("Invalid input for latitude")
       }
     }
 
     if (updatedLocation.description) {
       if (!(typeof updatedLocation.description === 'string' || updatedLocation.description instanceof String)) {
-        throw Error("Description field must take a string")
+        throw Error("Invalid input for description")
       }
     }
 
@@ -1088,7 +1088,7 @@ module.exports = async function() {
     }
 
     if (!(typeof newPlant.plant_name === 'string' || newPlant.plant_name instanceof String)) {
-      throw Error("Plant_name field must take a string")
+      throw Error("Invalid input for plant_name")
     }
 
     if (!newPlant.scientific_name) {
@@ -1096,7 +1096,7 @@ module.exports = async function() {
     }
 
     if (!(typeof newPlant.scientific_name === 'string' || newPlant.scientific_name instanceof String)) {
-      throw Error("Scientific_name field must take a string")
+      throw Error("Invalid input for scientific_name")
     }
 
     if (!newPlant.description) {
@@ -1104,7 +1104,7 @@ module.exports = async function() {
     }
 
     if (!(typeof newPlant.description === 'string' || newPlant.description instanceof String)) {
-      throw Error("Description field must take a string")
+      throw Error("Invalid input for description")
     }
 
     //Convert all passed in array of id to ObjectId
@@ -1112,7 +1112,7 @@ module.exports = async function() {
     //Default to empty array if the field is not given
     if (newPlant.images !== null && newPlant.images !== undefined) {
       if (!Array.isArray(newPlant.images)) {
-        throw Error("The field images must be array")
+        throw Error("Invalid input for the field images")
       }
 
       try {
@@ -1120,7 +1120,7 @@ module.exports = async function() {
           self[index] = ObjectID(image)
         })
       } catch {
-        throw Error("Not all elements under images are valid ObjectId")
+        throw Error("Not all elements under images are valid")
       }
     } else {
       newPlant.images = []
@@ -1128,7 +1128,7 @@ module.exports = async function() {
 
     if (newPlant.audio_files !== null && newPlant.audio_files !== undefined) {
       if (!Array.isArray(newPlant.audio_files)) {
-        throw Error("The field audio_files must be array")
+        throw Error("Invalid input for the field audio_files")
       }
 
       try {
@@ -1136,7 +1136,7 @@ module.exports = async function() {
           self[index] = ObjectID(audio)
         })
       } catch {
-        throw Error("Not all elements under audio_files are valid ObjectId")
+        throw Error("Not all elements under audio_files are valid")
       }
     } else {
       newPlant.audio_files = []
@@ -1144,7 +1144,7 @@ module.exports = async function() {
 
     if (newPlant.videos !== null && newPlant.videos !== undefined) {
       if (!Array.isArray(newPlant.videos)) {
-        throw Error("The field videos must be array")
+        throw Error("Invalid input for the field videos")
       }
 
       try {
@@ -1152,7 +1152,7 @@ module.exports = async function() {
           self[index] = ObjectID(video)
         })
       } catch {
-        throw Error("Not all elements under videos are valid ObjectId")
+        throw Error("Not all elements under videos are valid")
       }
     } else {
       newPlant.videos = []
@@ -1160,7 +1160,7 @@ module.exports = async function() {
 
     if (newPlant.tags !== null && newPlant.tags !== undefined) {
       if (!Array.isArray(newPlant.tags)) {
-        throw Error("The field tags must be array")
+        throw Error("Invalid input for the field tags")
       }
 
       try {
@@ -1168,7 +1168,7 @@ module.exports = async function() {
           self[index] = ObjectID(tag)
         })
       } catch {
-        throw Error("Not all elements under tags are valid ObjectId")
+        throw Error("Not all elements under tags are valid")
       }
     } else {
       newPlant.tags = []
@@ -1176,7 +1176,7 @@ module.exports = async function() {
 
     if (newPlant.categories !== null && newPlant.categories !== undefined) {
       if (!Array.isArray(newPlant.categories)) {
-        throw Error("The field categories must be array")
+        throw Error("Invalid input for the field categories")
       }
 
       try {
@@ -1184,7 +1184,7 @@ module.exports = async function() {
           self[index] = ObjectID(category)
         })
       } catch {
-        throw Error("Not all elements under categories are valid ObjectId")
+        throw Error("Not all elements under categories are valid")
       }
     } else {
       newPlant.categories = []
@@ -1192,7 +1192,7 @@ module.exports = async function() {
 
     if (newPlant.locations !== null && newPlant.locations !== undefined) {
       if (!Array.isArray(newPlant.locations)) {
-        throw Error("The field locations must be array")
+        throw Error("Invalid input for the field locations")
       }
 
       if (newPlant.locations.length < 1) {
@@ -1204,7 +1204,7 @@ module.exports = async function() {
           self[index] = ObjectID(location)
         })
       } catch {
-        throw Error("Not all elements under locations are valid ObjectId")
+        throw Error("Not all elements under locations are valid")
       }
     } else {
       throw Error("Require at least one location")
@@ -1212,14 +1212,14 @@ module.exports = async function() {
 
     if (newPlant.custom_fields !== null && newPlant.custom_fields !== undefined) {
       if (!Array.isArray(newPlant.custom_fields)) {
-        throw Error("The field custom_fields must be array")
+        throw Error("Invalid input for the field custom_fields")
       }
 
       //If custom_fields exist, it must have _id, field_title, and content
       newPlant.custom_fields.forEach((custom_field, index, self) => {
         //Check if element is type object
         if (!(typeof custom_field === 'object' && custom_field !== null)) {
-          throw Error("At least one of the custom_field is not of type object or is null")
+          throw Error("At least one of the custom_field is not valid")
         }
 
         if (!custom_field._id) {
@@ -1239,7 +1239,7 @@ module.exports = async function() {
           temp._id = ObjectID(temp._id)
           self[index] = temp
         } catch {
-          throw Error("A _id under custom_field is not valid ObjectId")
+          throw Error("A _id under custom_field is not valid")
         }
       })
     } else {
@@ -1378,7 +1378,7 @@ module.exports = async function() {
     }
 
     if (!(typeof updatedPlant.plant_name === 'string' || updatedPlant.plant_name instanceof String)) {
-      throw Error("Plant_name field must take a string")
+      throw Error("Invalid input for plant_name")
     }
 
     if (!updatedPlant.scientific_name) {
@@ -1386,7 +1386,7 @@ module.exports = async function() {
     }
 
     if (!(typeof updatedPlant.scientific_name === 'string' || updatedPlant.scientific_name instanceof String)) {
-      throw Error("Scientific_name field must take a string")
+      throw Error("Invalid input for scientific_name")
     }
 
     if (!updatedPlant.description) {
@@ -1394,14 +1394,14 @@ module.exports = async function() {
     }
 
     if (!(typeof updatedPlant.description === 'string' || updatedPlant.description instanceof String)) {
-      throw Error("Description field must take a string")
+      throw Error("Invalid input for description")
     }
 
     //Convert all passed in array of id to ObjectId
     //User should get data of the plant when they start editing
     if (updatedPlant.images !== null && updatedPlant.images !== undefined) {
       if (!Array.isArray(updatedPlant.images)) {
-        throw Error("The field images must be array")
+        throw Error("Invalid input for the field images")
       }
 
       try {
@@ -1409,13 +1409,13 @@ module.exports = async function() {
           self[index] = ObjectID(image)
         })
       } catch {
-        throw Error("Not all elements under images are valid ObjectId")
+        throw Error("Not all elements under images are valid")
       }
     }
 
     if (updatedPlant.audio_files !== null && updatedPlant.audio_files !== undefined) {
       if (!Array.isArray(updatedPlant.audio_files)) {
-        throw Error("The field audio_files must be array")
+        throw Error("Invalid input for the field audio_files")
       }
 
       try {
@@ -1423,13 +1423,13 @@ module.exports = async function() {
           self[index] = ObjectID(audio)
         })
       } catch {
-        throw Error("Not all elements under audio_files are valid ObjectId")
+        throw Error("Not all elements under audio_files are valid")
       }
     }
 
     if (updatedPlant.videos !== null && updatedPlant.videos !== undefined) {
       if (!Array.isArray(updatedPlant.videos)) {
-        throw Error("The field videos must be array")
+        throw Error("Invalid input for the field videos")
       }
 
       try {
@@ -1437,13 +1437,13 @@ module.exports = async function() {
           self[index] = ObjectID(video)
         })
       } catch {
-        throw Error("Not all elements under videos are valid ObjectId")
+        throw Error("Not all elements under videos are valid")
       }
     }
 
     if (updatedPlant.tags !== null && updatedPlant.tags !== undefined) {
       if (!Array.isArray(updatedPlant.tags)) {
-        throw Error("The field tags must be array")
+        throw Error("Invalid input for the field tags")
       }
 
       try {
@@ -1451,13 +1451,13 @@ module.exports = async function() {
           self[index] = ObjectID(tag)
         })
       } catch {
-        throw Error("Not all elements under tags are valid ObjectId")
+        throw Error("Not all elements under tags are valid")
       }
     }
 
     if (updatedPlant.categories !== null && updatedPlant.categories !== undefined) {
       if (!Array.isArray(updatedPlant.categories)) {
-        throw Error("The field categories must be array")
+        throw Error("Invalid input for the field categories")
       }
 
       try {
@@ -1465,13 +1465,13 @@ module.exports = async function() {
           self[index] = ObjectID(category)
         })
       } catch {
-        throw Error("Not all elements under categories are valid ObjectId")
+        throw Error("Not all elements under categories are valid")
       }
     }
 
     if (updatedPlant.locations !== null && updatedPlant.locations !== undefined) {
       if (!Array.isArray(updatedPlant.locations)) {
-        throw Error("The field locations must be array")
+        throw Error("Invalid input for the field locations")
       }
 
       if (updatedPlant.locations.length < 1) {
@@ -1483,7 +1483,7 @@ module.exports = async function() {
           self[index] = ObjectID(location)
         })
       } catch {
-        throw Error("Not all elements under locations are valid ObjectId")
+        throw Error("Not all elements under locations are valid")
       }
     } else {
       throw Error("Require at least one location")
@@ -1491,14 +1491,14 @@ module.exports = async function() {
 
     if (updatedPlant.custom_fields !== null && updatedPlant.custom_fields !== undefined) {
       if (!Array.isArray(updatedPlant.custom_fields)) {
-        throw Error("The field custom_fields must be array")
+        throw Error("Invalid input for the field custom_fields")
       }
 
       //If custom_fields exist, it must have _id, field_title, and content
       updatedPlant.custom_fields.forEach((custom_field, index, self) => {
         //Check if element is type object
         if (!(typeof custom_field === 'object' && custom_field !== null)) {
-          throw Error("At least one of the custom_field is not of type object or is null")
+          throw Error("At least one of the custom_field is not valid")
         }
 
         if (!custom_field._id) {
@@ -1518,14 +1518,14 @@ module.exports = async function() {
           temp._id = ObjectID(custom_field._id)
           self[index] = temp
         } catch {
-          throw Error("A _id under custom_field is not valid ObjectId")
+          throw Error("A _id under custom_field is not valid")
         }
       })
     }
 
     if (updatedPlant.isPublish !== null && updatedPlant.isPublish !== undefined) {
       if (!(typeof updatedPlant.isPublish === 'boolean')) {
-        throw Error("IsPublish field must take a boolean")
+        throw Error("Invalid input for isPublish")
       }
     }
    
@@ -1995,7 +1995,7 @@ module.exports = async function() {
     }
 
     if (!(typeof newWaypoint.waypoint_name === 'string' || newWaypoint.waypoint_name instanceof String)) {
-      throw Error("Waypoint_name field must take a string")
+      throw Error("Invalid input for waypoint_name")
     }
 
     if (!newWaypoint.description) {
@@ -2003,7 +2003,7 @@ module.exports = async function() {
     }
 
     if (!(typeof newWaypoint.description === 'string' || newWaypoint.description instanceof String)) {
-      throw Error("Description field must take a string")
+      throw Error("Invalid input for description")
     }
 
     //Convert all passed in array of id to ObjectId
@@ -2011,7 +2011,7 @@ module.exports = async function() {
     //Default to empty array if the field is not given
     if (newWaypoint.images !== null && newWaypoint.images !== undefined) {
       if (!Array.isArray(newWaypoint.images)) {
-        throw Error("The field images must be array")
+        throw Error("Invalid input for the field images")
       }
 
       try {
@@ -2019,7 +2019,7 @@ module.exports = async function() {
           self[index] = ObjectID(image)
         })
       } catch {
-        throw Error("Not all elements under images are valid ObjectId")
+        throw Error("Not all elements under images are valid")
       }
     } else {
       newWaypoint.images = []
@@ -2027,7 +2027,7 @@ module.exports = async function() {
 
     if (newWaypoint.audio_files !== null && newWaypoint.audio_files !== undefined) {
       if (!Array.isArray(newWaypoint.audio_files)) {
-        throw Error("The field audio_files must be array")
+        throw Error("Invalid input for the field audio_files")
       }
 
       try {
@@ -2035,7 +2035,7 @@ module.exports = async function() {
           self[index] = ObjectID(audio)
         })
       } catch {
-        throw Error("Not all elements under audio_files are valid ObjectId")
+        throw Error("Not all elements under audio_files are valid")
       }
     } else {
       newWaypoint.audio_files = []
@@ -2043,7 +2043,7 @@ module.exports = async function() {
 
     if (newWaypoint.videos !== null && newWaypoint.videos !== undefined) {
       if (!Array.isArray(newWaypoint.videos)) {
-        throw Error("The field videos must be array")
+        throw Error("Invalid input for the field videos")
       }
 
       try {
@@ -2051,7 +2051,7 @@ module.exports = async function() {
           self[index] = ObjectID(video)
         })
       } catch {
-        throw Error("Not all elements under videos are valid ObjectId")
+        throw Error("Not all elements under videos are valid")
       }
     } else {
       newWaypoint.videos = []
@@ -2059,7 +2059,7 @@ module.exports = async function() {
 
     if (newWaypoint.tags !== null && newWaypoint.tags !== undefined) {
       if (!Array.isArray(newWaypoint.tags)) {
-        throw Error("The field tags must be array")
+        throw Error("Invalid input for the field tags")
       }
 
       try {
@@ -2067,7 +2067,7 @@ module.exports = async function() {
           self[index] = ObjectID(tag)
         })
       } catch {
-        throw Error("Not all elements under tags are valid ObjectId")
+        throw Error("Not all elements under tags are valid")
       }
     } else {
       newWaypoint.tags = []
@@ -2075,7 +2075,7 @@ module.exports = async function() {
 
     if (newWaypoint.categories !== null && newWaypoint.categories !== undefined) {
       if (!Array.isArray(newWaypoint.categories)) {
-        throw Error("The field categories must be array")
+        throw Error("Invalid input for the field categories")
       }
 
       try {
@@ -2083,7 +2083,7 @@ module.exports = async function() {
           self[index] = ObjectID(category)
         })
       } catch {
-        throw Error("Not all elements under categories are valid ObjectId")
+        throw Error("Not all elements under categories are valid")
       }
     } else {
       newWaypoint.categories = []
@@ -2091,7 +2091,7 @@ module.exports = async function() {
 
     if (newWaypoint.locations !== null && newWaypoint.locations !== undefined) {
       if (!Array.isArray(newWaypoint.locations)) {
-        throw Error("The field locations must be array")
+        throw Error("Invalid input for the field locations")
       }
 
       if (newWaypoint.locations.length < 1) {
@@ -2103,7 +2103,7 @@ module.exports = async function() {
           self[index] = ObjectID(location)
         })
       } catch {
-        throw Error("Not all elements under locations are valid ObjectId")
+        throw Error("Not all elements under locations are valid")
       }
     } else {
       throw Error("Require at least one location")
@@ -2111,7 +2111,7 @@ module.exports = async function() {
 
     if (newWaypoint.plants !== null && newWaypoint.plants !== undefined) {
       if (!Array.isArray(newWaypoint.plants)) {
-        throw Error("The field plants must be array")
+        throw Error("Invalid input for the field plants")
       }
 
       try {
@@ -2119,7 +2119,7 @@ module.exports = async function() {
           self[index] = ObjectID(plant)
         })
       } catch {
-        throw Error("Not all elements under plants are valid ObjectId")
+        throw Error("Not all elements under plants are valid")
       }
     } else {
       newWaypoint.plants = []
@@ -2127,13 +2127,13 @@ module.exports = async function() {
 
     if (newWaypoint.custom_fields !== null && newWaypoint.custom_fields !== undefined) {
       if (!Array.isArray(newWaypoint.custom_fields)) {
-        throw Error("The field custom_fields must be array")
+        throw Error("Invalid input for the field custom_fields")
       }
 
       newWaypoint.custom_fields.forEach((custom_field, index, self) => {
         //Check if element is type object
         if (!(typeof custom_field === 'object' && custom_field !== null)) {
-          throw Error("At least one of the custom_field is not of type object or is null")
+          throw Error("At least one of the custom_field is not valid ")
         }
 
         if (!custom_field._id) {
@@ -2153,7 +2153,7 @@ module.exports = async function() {
           temp._id = ObjectID(custom_field._id)
           self[index] = temp
         } catch {
-          throw Error("A _id under custom_field is not valid ObjectId")
+          throw Error("A _id under custom_field is not valid")
         }
       })
     } else {
@@ -2393,7 +2393,7 @@ module.exports = async function() {
     }
 
     if (!(typeof updatedWaypoint.waypoint_name === 'string' || updatedWaypoint.waypoint_name instanceof String)) {
-      throw Error("Waypoint_name field must take a string")
+      throw Error("Invalid input for waypoint_name")
     }
 
     if (!updatedWaypoint.description) {
@@ -2401,14 +2401,14 @@ module.exports = async function() {
     }
 
     if (!(typeof updatedWaypoint.description === 'string' || updatedWaypoint.description instanceof String)) {
-      throw Error("Description field must take a string")
+      throw Error("Invalid input for description")
     }
 
     //Convert all passed in array of id to ObjectId
     //User should get data of the waypoint when they start editing
     if (updatedWaypoint.images !== null && updatedWaypoint.images !== undefined) {
       if (!Array.isArray(updatedWaypoint.images)) {
-        throw Error("The field images must be array")
+        throw Error("Invalid input for the field images")
       }
 
       try {
@@ -2416,13 +2416,13 @@ module.exports = async function() {
           self[index] = ObjectID(image)
         })
       } catch {
-        throw Error("Not all elements under images are valid ObjectId")
+        throw Error("Not all elements under images are valid")
       }
     }
 
     if (updatedWaypoint.audio_files !== null && updatedWaypoint.audio_files !== undefined) {
       if (!Array.isArray(updatedWaypoint.audio_files)) {
-        throw Error("The field audio_files must be array")
+        throw Error("Invalid input for the field audio_files")
       }
 
       try {
@@ -2430,13 +2430,13 @@ module.exports = async function() {
           self[index] = ObjectID(audio)
         })
       } catch {
-        throw Error("Not all elements under audio_files are valid ObjectId")
+        throw Error("Not all elements under audio_files are valid")
       }
     }
 
     if (updatedWaypoint.videos !== null && updatedWaypoint.videos !== undefined) {
       if (!Array.isArray(updatedWaypoint.videos)) {
-        throw Error("The field videos must be array")
+        throw Error("Invalid input for the field videos")
       }
 
       try {
@@ -2444,13 +2444,13 @@ module.exports = async function() {
           self[index] = ObjectID(video)
         })
       } catch {
-        throw Error("Not all elements under videos are valid ObjectId")
+        throw Error("Not all elements under videos are valid")
       }
     }
 
     if (updatedWaypoint.tags !== null && updatedWaypoint.tags !== undefined) {
       if (!Array.isArray(updatedWaypoint.tags)) {
-        throw Error("The field tags must be array")
+        throw Error("Invalid input for the field tags")
       }
 
       try {
@@ -2458,13 +2458,13 @@ module.exports = async function() {
           self[index] = ObjectID(tag)
         })
       } catch {
-        throw Error("Not all elements under tags are valid ObjectId")
+        throw Error("Not all elements under tags are valid")
       }
     }
 
     if (updatedWaypoint.categories !== null && updatedWaypoint.categories !== undefined) {
       if (!Array.isArray(updatedWaypoint.categories)) {
-        throw Error("The field categories must be array")
+        throw Error("Invalid input for the field categories")
       }
 
       try {
@@ -2472,13 +2472,13 @@ module.exports = async function() {
           self[index] = ObjectID(category)
         })
       } catch {
-        throw Error("Not all elements under categories are valid ObjectId")
+        throw Error("Not all elements under categories are valid")
       }
     }
 
     if (updatedWaypoint.locations !== null && updatedWaypoint.locations !== undefined) {
       if (!Array.isArray(updatedWaypoint.locations)) {
-        throw Error("The field locations must be array")
+        throw Error("Invalid input for the field locations")
       }
 
       if (updatedWaypoint.locations.length < 1) {
@@ -2490,7 +2490,7 @@ module.exports = async function() {
           self[index] = ObjectID(location)
         })
       } catch {
-        throw Error("Not all elements under locations are valid ObjectId")
+        throw Error("Not all elements under locations are valid")
       }
     } else {
       throw Error("Require at least one location")
@@ -2498,7 +2498,7 @@ module.exports = async function() {
 
     if (updatedWaypoint.plants !== null && updatedWaypoint.plants !== undefined) {
       if (!Array.isArray(updatedWaypoint.plants)) {
-        throw Error("The field plants must be array")
+        throw Error("Invalid input for the field plants")
       }
 
       try {
@@ -2506,19 +2506,19 @@ module.exports = async function() {
           self[index] = ObjectID(plant)
         })
       } catch {
-        throw Error("Not all elements under plants are valid ObjectId")
+        throw Error("Not all elements under plants are valid")
       }
     }
 
     if (updatedWaypoint.custom_fields !== null && updatedWaypoint.custom_fields !== undefined) {
       if (!Array.isArray(updatedWaypoint.custom_fields)) {
-        throw Error("The field custom_fields must be array")
+        throw Error("Invalid input for the field custom_fields")
       }
 
       updatedWaypoint.custom_fields.forEach((custom_field, index, self) => {
         //Check if element is type object
         if (!(typeof custom_field === 'object' && custom_field !== null)) {
-          throw Error("At least one of the custom_field is not of type object or is null")
+          throw Error("At least one of the custom_field is not valid")
         }
 
         if (!custom_field._id) {
@@ -2538,14 +2538,14 @@ module.exports = async function() {
           temp._id = ObjectID(custom_field._id)
           self[index] = temp
         } catch {
-          throw Error("A _id under custom_field is not valid ObjectId")
+          throw Error("A _id under custom_field is not valid")
         }
       })
     }
 
     if (updatedWaypoint.isPublish !== null && updatedWaypoint.isPublish !== undefined) {
       if (!(typeof updatedWaypoint.isPublish === 'boolean')) {
-        throw Error("IsPublish field must take a boolean")
+        throw Error("Invalid input for isPublish")
       }
     }
 
@@ -2981,7 +2981,7 @@ module.exports = async function() {
     }
 
     if (!(typeof newTour.tour_name === 'string' || newTour.tour_name instanceof String)) {
-      throw Error("Tour_name field must take a string")
+      throw Error("Invalid input for tour_name")
     }
 
     if (!newTour.description) {
@@ -2989,7 +2989,7 @@ module.exports = async function() {
     }
 
     if (!(typeof newTour.description === 'string' || newTour.description instanceof String)) {
-      throw Error("Description field must take a string")
+      throw Error("Invalid input for description")
     }
 
     //Convert all passed in array of id to ObjectId
@@ -2997,7 +2997,7 @@ module.exports = async function() {
     //Default to empty array if the field is not given
     if (newTour.images !== null && newTour.images !== undefined) {
       if (!Array.isArray(newTour.images)) {
-        throw Error("The field images must be array")
+        throw Error("Invalid input for the field images")
       }
 
       try {
@@ -3005,7 +3005,7 @@ module.exports = async function() {
           self[index] = ObjectID(image)
         })
       } catch {
-        throw Error("Not all elements under images are valid ObjectId")
+        throw Error("Not all elements under images are valid")
       }
     } else {
       newTour.images = []
@@ -3013,7 +3013,7 @@ module.exports = async function() {
 
     if (newTour.audio_files !== null && newTour.audio_files !== undefined) {
       if (!Array.isArray(newTour.audio_files)) {
-        throw Error("The field audio_files must be array")
+        throw Error("Invalid input for the field audio_files")
       }
 
       try {
@@ -3021,7 +3021,7 @@ module.exports = async function() {
           self[index] = ObjectID(audio)
         })
       } catch {
-        throw Error("Not all elements under audio_files are valid ObjectId")
+        throw Error("Not all elements under audio_files are valid")
       }
     } else {
       newTour.audio_files = []
@@ -3029,7 +3029,7 @@ module.exports = async function() {
 
     if (newTour.videos !== null && newTour.videos !== undefined) {
       if (!Array.isArray(newTour.videos)) {
-        throw Error("The field videos must be array")
+        throw Error("Invalid input for the field videos")
       }
 
       try {
@@ -3037,7 +3037,7 @@ module.exports = async function() {
           self[index] = ObjectID(video)
         })
       } catch {
-        throw Error("Not all elements under videos are valid ObjectId")
+        throw Error("Not all elements under videos are valid")
       }
     } else {
       newTour.videos = []
@@ -3045,7 +3045,7 @@ module.exports = async function() {
 
     if (newTour.tags !== null && newTour.tags !== undefined) {
       if (!Array.isArray(newTour.tags)) {
-        throw Error("The field tags must be array")
+        throw Error("Invalid input for the field tags")
       }
 
       try {
@@ -3053,7 +3053,7 @@ module.exports = async function() {
           self[index] = ObjectID(tag)
         })
       } catch {
-        throw Error("Not all elements under tags are valid ObjectId")
+        throw Error("Not all elements under tags are valid")
       }
     } else {
       newTour.tags = []
@@ -3061,7 +3061,7 @@ module.exports = async function() {
 
     if (newTour.categories !== null && newTour.categories !== undefined) {
       if (!Array.isArray(newTour.categories)) {
-        throw Error("The field categories must be array")
+        throw Error("Invalid input for the field categories")
       }
 
       try {
@@ -3069,7 +3069,7 @@ module.exports = async function() {
           self[index] = ObjectID(category)
         })
       } catch {
-        throw Error("Not all elements under categories are valid ObjectId")
+        throw Error("Not all elements under categories are valid")
       }
     } else {
       newTour.categories = []
@@ -3077,7 +3077,7 @@ module.exports = async function() {
 
     if (newTour.plants !== null && newTour.plants !== undefined) {
       if (!Array.isArray(newTour.plants)) {
-        throw Error("The field plants must be array")
+        throw Error("Invalid input for the field plants")
       }
 
       try {
@@ -3085,7 +3085,7 @@ module.exports = async function() {
           self[index] = ObjectID(plant)
         })
       } catch {
-        throw Error("Not all elements under plants are valid ObjectId")
+        throw Error("Not all elements under plants are valid")
       }
     } else {
       newTour.plants = []
@@ -3093,7 +3093,7 @@ module.exports = async function() {
 
     if (newTour.waypoints !== null && newTour.waypoints !== undefined) {
       if (!Array.isArray(newTour.waypoints)) {
-        throw Error("The field waypoints must be array")
+        throw Error("Invalid input for the field waypoints")
       }
 
       try {
@@ -3101,7 +3101,7 @@ module.exports = async function() {
           self[index] = ObjectID(waypoint)
         })
       } catch {
-        throw Error("Not all elements under waypoints are valid ObjectId")
+        throw Error("Not all elements under waypoints are valid")
       }
     } else {
       newTour.waypoints = []
@@ -3109,13 +3109,13 @@ module.exports = async function() {
 
     if (newTour.custom_fields !== null && newTour.custom_fields !== undefined) {
       if (!Array.isArray(newTour.custom_fields)) {
-        throw Error("The field custom_fields must be array")
+        throw Error("Invalid input for the field custom_fields")
       }
 
       newTour.custom_fields.forEach((custom_field, index, self) => {
         //Check if element is type object
         if (!(typeof custom_field === 'object' && custom_field !== null)) {
-          throw Error("At least one of the custom_field is not of type object or is null")
+          throw Error("At least one of the custom_field is not valid")
         }
 
         if (!custom_field._id) {
@@ -3135,7 +3135,7 @@ module.exports = async function() {
           temp._id = ObjectID(custom_field._id)
           self[index] = temp
         } catch {
-          throw Error("A _id under custom_field is not valid ObjectId")
+          throw Error("A _id under custom_field is not valid")
         }
       })
     } else {
@@ -3555,7 +3555,7 @@ module.exports = async function() {
     }
 
     if (!(typeof updatedTour.tour_name === 'string' || updatedTour.tour_name instanceof String)) {
-      throw Error("Tour_name field must take a string")
+      throw Error("Invalid input for tour_name")
     }
 
     if (!updatedTour.description) {
@@ -3563,14 +3563,14 @@ module.exports = async function() {
     }
 
     if (!(typeof updatedTour.description === 'string' || updatedTour.description instanceof String)) {
-      throw Error("Description field must take a string")
+      throw Error("Invalid input for description")
     }
 
     //Convert all passed in array of id to ObjectId
     //User should get data of the tour when they start editing
     if (updatedTour.images !== null && updatedTour.images !== undefined) {
       if (!Array.isArray(updatedTour.images)) {
-        throw Error("The field images must be array")
+        throw Error("Invalid input for the field images")
       }
 
       try {
@@ -3578,13 +3578,13 @@ module.exports = async function() {
           self[index] = ObjectID(image)
         })
       } catch {
-        throw Error("Not all elements under images are valid ObjectId")
+        throw Error("Not all elements under images are valid")
       }
     }
 
     if (updatedTour.audio_files !== null && updatedTour.audio_files !== undefined) {
       if (!Array.isArray(updatedTour.audio_files)) {
-        throw Error("The field audio_files must be array")
+        throw Error("Invalid input for the field audio_files")
       }
 
       try {
@@ -3592,13 +3592,13 @@ module.exports = async function() {
           self[index] = ObjectID(audio)
         })
       } catch {
-        throw Error("Not all elements under audio_files are valid ObjectId")
+        throw Error("Not all elements under audio_files are valid")
       }
     }
 
     if (updatedTour.videos !== null && updatedTour.videos !== undefined) {
       if (!Array.isArray(updatedTour.videos)) {
-        throw Error("The field videos must be array")
+        throw Error("Invalid input for the field videos")
       }
 
       try {
@@ -3606,13 +3606,13 @@ module.exports = async function() {
           self[index] = ObjectID(video)
         })
       } catch {
-        throw Error("Not all elements under videos are valid ObjectId")
+        throw Error("Not all elements under videos are valid")
       }
     }
 
     if (updatedTour.tags !== null && updatedTour.tags !== undefined) {
       if (!Array.isArray(updatedTour.tags)) {
-        throw Error("The field tags must be array")
+        throw Error("Invalid input for the field tags")
       }
 
       try {
@@ -3620,13 +3620,13 @@ module.exports = async function() {
           self[index] = ObjectID(tag)
         })
       } catch {
-        throw Error("Not all elements under tags are valid ObjectId")
+        throw Error("Not all elements under tags are valid")
       }
     }
 
     if (updatedTour.categories !== null && updatedTour.categories !== undefined) {
       if (!Array.isArray(updatedTour.categories)) {
-        throw Error("The field categories must be array")
+        throw Error("Invalid input for the field categories")
       }
 
       try {
@@ -3634,13 +3634,13 @@ module.exports = async function() {
           self[index] = ObjectID(category)
         })
       } catch {
-        throw Error("Not all elements under categories are valid ObjectId")
+        throw Error("Not all elements under categories are valid")
       }
     }
 
     if (updatedTour.plants !== null && updatedTour.plants !== undefined) {
       if (!Array.isArray(updatedTour.plants)) {
-        throw Error("The field plants must be array")
+        throw Error("Invalid input for the field plants")
       }
 
       try {
@@ -3648,13 +3648,13 @@ module.exports = async function() {
           self[index] = ObjectID(plant)
         })
       } catch {
-        throw Error("Not all elements under plants are valid ObjectId")
+        throw Error("Not all elements under plants are valid")
       }
     }
 
     if (updatedTour.waypoints !== null && updatedTour.waypoints !== undefined) {
       if (!Array.isArray(updatedTour.waypoints)) {
-        throw Error("The field waypoints must be array")
+        throw Error("Invalid input for the field waypoints")
       }
 
       try {
@@ -3662,19 +3662,19 @@ module.exports = async function() {
           self[index] = ObjectID(waypoint)
         })
       } catch {
-        throw Error("Not all elements under waypoints are valid ObjectId")
+        throw Error("Not all elements under waypoints are valid")
       }
     }
 
     if (updatedTour.custom_fields !== null && updatedTour.custom_fields !== undefined) {
       if (!Array.isArray(updatedTour.custom_fields)) {
-        throw Error("The field custom_fields must be array")
+        throw Error("Invalid input for the field custom_fields")
       }
 
       updatedTour.custom_fields.forEach((custom_field, index, self) => {
         //Check if element is type object
         if (!(typeof custom_field === 'object' && custom_field !== null)) {
-          throw Error("At least one of the custom_field is not of type object or is null")
+          throw Error("At least one of the custom_field is not valid")
         }
 
         if (!custom_field._id) {
@@ -3694,7 +3694,7 @@ module.exports = async function() {
           temp._id = ObjectID(custom_field._id)
           self[index] = temp
         } catch {
-          throw Error("A _id under custom_field is not valid ObjectId")
+          throw Error("A _id under custom_field is not valid")
         }
       })
     }
@@ -3834,7 +3834,7 @@ module.exports = async function() {
     }
 
     if (!(typeof newLearnMore.learn_more_title === 'string' || newLearnMore.learn_more_title instanceof String)) {
-      throw Error("Learn_more_title field must take a string")
+      throw Error("Invalid input for learn_more_title")
     }
 
     if (!newLearnMore.description) {
@@ -3842,12 +3842,12 @@ module.exports = async function() {
     }
 
     if (!(typeof newLearnMore.description === 'string' || newLearnMore.description instanceof String)) {
-      throw Error("Description field must take a string")
+      throw Error("Invalid input for description")
     }
    
     if (newLearnMore.images !== null && newLearnMore.images !== undefined) {
       if (!Array.isArray(newLearnMore.images)) {
-        throw Error("The field images must be array")
+        throw Error("Invalid input for the field images")
       }
 
       try {
@@ -3855,7 +3855,7 @@ module.exports = async function() {
           self[index] = ObjectID(image)
         })
       } catch {
-        throw Error("Not all elements under images are valid ObjectId")
+        throw Error("Not all elements under images are valid")
       }
     } else {
       newLearnMore.images = []
@@ -3863,7 +3863,7 @@ module.exports = async function() {
 
     if (newLearnMore.audio_files !== null && newLearnMore.audio_files !== undefined) {
       if (!Array.isArray(newLearnMore.audio_files)) {
-        throw Error("The field audio_files must be array")
+        throw Error("Invalid input for the field audio_files")
       }
 
       try {
@@ -3871,7 +3871,7 @@ module.exports = async function() {
           self[index] = ObjectID(audio)
         })
       } catch {
-        throw Error("Not all elements under audio_files are valid ObjectId")
+        throw Error("Not all elements under audio_files are valid")
       }
     } else {
       newLearnMore.audio_files = []
@@ -3879,7 +3879,7 @@ module.exports = async function() {
 
     if (newLearnMore.videos !== null && newLearnMore.videos !== undefined) {
       if (!Array.isArray(newLearnMore.videos)) {
-        throw Error("The field videos must be array")
+        throw Error("Invalid input for the field videos")
       }
 
       try {
@@ -3887,7 +3887,7 @@ module.exports = async function() {
           self[index] = ObjectID(video)
         })
       } catch {
-        throw Error("Not all elements under videos are valid ObjectId")
+        throw Error("Not all elements under videos are valid")
       }
     } else {
       newLearnMore.videos = []
@@ -3895,7 +3895,7 @@ module.exports = async function() {
 
     if (newLearnMore.tags !== null && newLearnMore.tags !== undefined) {
       if (!Array.isArray(newLearnMore.tags)) {
-        throw Error("The field tags must be array")
+        throw Error("Invalid input for the field tags")
       }
 
       try {
@@ -3903,7 +3903,7 @@ module.exports = async function() {
           self[index] = ObjectID(tag)
         })
       } catch {
-        throw Error("Not all elements under tags are valid ObjectId")
+        throw Error("Not all elements under tags are valid")
       }
     } else {
       newLearnMore.tags = []
@@ -3911,7 +3911,7 @@ module.exports = async function() {
 
     if (newLearnMore.categories !== null && newLearnMore.categories !== undefined) {
       if (!Array.isArray(newLearnMore.categories)) {
-        throw Error("The field categories must be array")
+        throw Error("Invalid input for the field categories")
       }
 
       try {
@@ -3919,7 +3919,7 @@ module.exports = async function() {
           self[index] = ObjectID(category)
         })
       } catch {
-        throw Error("Not all elements under categories are valid ObjectId")
+        throw Error("Not all elements under categories are valid")
       }
     } else {
       newLearnMore.categories = []
@@ -3927,13 +3927,13 @@ module.exports = async function() {
 
     if (newLearnMore.custom_fields !== null && newLearnMore.custom_fields !== undefined) {
       if (!Array.isArray(newLearnMore.custom_fields)) {
-        throw Error("The field custom_fields must be array")
+        throw Error("Invalid input for the field custom_fields")
       }
 
       newLearnMore.custom_fields.forEach((custom_field, index, self) => {
         //Check if element is type object
         if (!(typeof custom_field === 'object' && custom_field !== null)) {
-          throw Error("At least one of the custom_field is not of type object or is null")
+          throw Error("At least one of the custom_field is not valid")
         }
 
         if (!custom_field._id) {
@@ -3953,7 +3953,7 @@ module.exports = async function() {
           temp._id = ObjectID(custom_field._id)
           self[index] = temp
         } catch {
-          throw Error("A _id under custom_field is not valid ObjectId")
+          throw Error("A _id under custom_field is not valid")
         }
       })
     } else {
@@ -4081,7 +4081,7 @@ module.exports = async function() {
     }
 
     if (!(typeof updatedLearnMore.learn_more_title === 'string' || updatedLearnMore.learn_more_title instanceof String)) {
-      throw Error("Learn_more_title field must take a string")
+      throw Error("Invalid input for learn_more_title")
     }
 
     if (!updatedLearnMore.description) {
@@ -4089,12 +4089,12 @@ module.exports = async function() {
     }
 
     if (!(typeof updatedLearnMore.description === 'string' || updatedLearnMore.description instanceof String)) {
-      throw Error("Description field must take a string")
+      throw Error("Invalid input for description")
     }
     
     if (updatedLearnMore.images !== null && updatedLearnMore.images !== undefined) {
       if (!Array.isArray(updatedLearnMore.images)) {
-        throw Error("The field images must be array")
+        throw Error("Invalid input for the field images")
       }
 
       try {
@@ -4102,13 +4102,13 @@ module.exports = async function() {
           self[index] = ObjectID(image)
         })
       } catch {
-        throw Error("Not all elements under images are valid ObjectId")
+        throw Error("Not all elements under images are valid")
       }
     }
 
     if (updatedLearnMore.audio_files !== null && updatedLearnMore.audio_files !== undefined) {
       if (!Array.isArray(updatedLearnMore.audio_files)) {
-        throw Error("The field audio_files must be array")
+        throw Error("Invalid input for the field audio_files")
       }
 
       try {
@@ -4116,13 +4116,13 @@ module.exports = async function() {
           self[index] = ObjectID(audio)
         })
       } catch {
-        throw Error("Not all elements under audio_files are valid ObjectId")
+        throw Error("Not all elements under audio_files are valid")
       }
     }
 
     if (updatedLearnMore.videos !== null && updatedLearnMore.videos !== undefined) {
       if (!Array.isArray(updatedLearnMore.videos)) {
-        throw Error("The field videos must be array")
+        throw Error("Invalid input for the field videos")
       }
 
       try {
@@ -4130,13 +4130,13 @@ module.exports = async function() {
           self[index] = ObjectID(video)
         })
       } catch {
-        throw Error("Not all elements under videos are valid ObjectId")
+        throw Error("Not all elements under videos are valid")
       }
     }
 
     if (updatedLearnMore.tags !== null && updatedLearnMore.tags !== undefined) {
       if (!Array.isArray(updatedLearnMore.tags)) {
-        throw Error("The field tags must be array")
+        throw Error("Invalid input for the field tags")
       }
 
       try {
@@ -4144,13 +4144,13 @@ module.exports = async function() {
           self[index] = ObjectID(tag)
         })
       } catch {
-        throw Error("Not all elements under tags are valid ObjectId")
+        throw Error("Not all elements under tags are valid")
       }
     }
     
     if (updatedLearnMore.categories !== null && updatedLearnMore.categories !== undefined) {
       if (!Array.isArray(updatedLearnMore.categories)) {
-        throw Error("The field categories must be array")
+        throw Error("Invalid input for the field categories")
       }
 
       try {
@@ -4158,19 +4158,19 @@ module.exports = async function() {
           self[index] = ObjectID(category)
         })
       } catch {
-        throw Error("Not all elements under categories are valid ObjectId")
+        throw Error("Not all elements under categories are valid")
       }
     }
 
     if (updatedLearnMore.custom_fields !== null && updatedLearnMore.custom_fields !== undefined) {
       if (!Array.isArray(updatedLearnMore.custom_fields)) {
-        throw Error("The field custom_fields must be array")
+        throw Error("Invalid input for the field custom_fields")
       }
 
       updatedLearnMore.custom_fields.forEach((custom_field, index, self) => {
         //Check if element is type object
         if (!(typeof custom_field === 'object' && custom_field !== null)) {
-          throw Error("At least one of the custom_field is not of type object or is null")
+          throw Error("At least one of the custom_field is not valid")
         }
 
         if (!custom_field._id) {
@@ -4190,7 +4190,7 @@ module.exports = async function() {
           temp._id = ObjectID(custom_field._id)
           self[index] = temp
         } catch {
-          throw Error("A _id under custom_field is not valid ObjectId")
+          throw Error("A _id under custom_field is not valid")
         }
       })
     }
