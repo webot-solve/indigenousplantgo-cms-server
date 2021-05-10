@@ -268,6 +268,13 @@ module.exports = async function() {
       throw Error("Missing image")
     }
 
+    const image = await images.findOne({
+      caption: newImage.caption
+    })
+    if (image) {
+      throw Error("Image caption is already taken")
+    }
+
     if (!newImage.caption) {
       throw Error("Missing caption")
     }
@@ -292,6 +299,23 @@ module.exports = async function() {
   //Update
   //PUT /api/images/:imageId
   async function updateImage({imageId, url, updatedImage, s3}) {
+    const image = await images.findOne({
+      caption: updatedImage.caption
+    })
+    if (image) {
+      if (image._id != imageId) {
+        throw Error("Image caption is already taken")
+      }
+    }
+
+    if (!updatedImage.caption) {
+      throw Error("Missing caption")
+    }
+
+    if (!(typeof updatedImage.caption === 'string' || updatedImage.caption instanceof String)) {
+      throw Error("Invalid input for caption")
+    }
+
     //There is a new url, delete the old one from s3
     if (url) {
       const image = await images.findOne({_id: ObjectID(imageId)})
@@ -314,14 +338,6 @@ module.exports = async function() {
           image_url: url
         }}
       )
-    }
-
-    if (!updatedImage.caption) {
-      throw Error("Missing caption")
-    }
-
-    if (!(typeof updatedImage.caption === 'string' || updatedImage.caption instanceof String)) {
-      throw Error("Invalid input for caption")
     }
 
     const result = await images.findOneAndUpdate(
@@ -374,6 +390,13 @@ module.exports = async function() {
       throw Error("Missing audio")
     }
 
+    const audio = await audios.findOne({
+      caption: newAudio.caption
+    })
+    if (audio) {
+      throw Error("Audio caption is already taken")
+    }
+
     if (!newAudio.caption) {
       throw Error("Missing caption")
     }
@@ -398,6 +421,23 @@ module.exports = async function() {
   //Update
   //PUT /api/audios/:audioId
   async function updateAudio({audioId, url, updatedAudio, s3}) {
+    const audio = await audios.findOne({
+      caption: updatedAudio.caption
+    })
+    if (audio) {
+      if (audio._id != audioId) {
+        throw Error("Audio caption is already taken")
+      }
+    }
+
+    if (!updatedAudio.caption) {
+      throw Error("Missing caption")
+    }
+
+    if (!(typeof updatedAudio.caption === 'string' || updatedAudio.caption instanceof String)) {
+      throw Error("Invalid input for caption")
+    }
+
     //There is a new url, delete the old one from s3
     if (url) {
       const audio = await audios.findOne({_id: ObjectID(audioId)})
@@ -420,14 +460,6 @@ module.exports = async function() {
           audio_file_url: url
         }}
       )
-    }
-
-    if (!updatedAudio.caption) {
-      throw Error("Missing caption")
-    }
-
-    if (!(typeof updatedAudio.caption === 'string' || updatedAudio.caption instanceof String)) {
-      throw Error("Invalid input for caption")
     }
 
     const result = await audios.findOneAndUpdate(
@@ -489,6 +521,13 @@ module.exports = async function() {
       throw Error("Invalid input for video_url")
     }
 
+    const video = await videos.findOne({
+      caption: newVideo.caption
+    })
+    if (video) {
+      throw Error("Video caption is already taken")
+    }
+
     if (!newVideo.caption) {
       throw Error("Missing caption")
     }
@@ -523,6 +562,15 @@ module.exports = async function() {
       }
     } else {
       throw Error("Invalid input for video_url")
+    }
+
+    const video = await videos.findOne({
+      caption: updatedVideo.caption
+    })
+    if (video) {
+      if (video._id != videoId) {
+        throw Error("Video caption is already taken")
+      }
     }
 
     if (!updatedVideo.caption) {
@@ -579,6 +627,13 @@ module.exports = async function() {
   //Create
   //POST /api/tags
   async function createTag({tag_name}) {
+    const tag = await tags.findOne({
+      tag_name: tag_name
+    })
+    if (tag) {
+      throw Error("Tag already exist")
+    }
+
     if (!tag_name) {
       throw Error("Require a tag name")
     }
@@ -602,6 +657,15 @@ module.exports = async function() {
   //Update
   //PUT /api/tags/:tagId
   async function updateTag({tagId, updatedTag}) {
+    const tag = await tags.findOne({
+      tag_name: updatedTag.tag_name
+    })
+    if (tag) {
+      if (tag._id != tagId) {
+        throw Error("Tag already exist")
+      }
+    }
+
     if (!updatedTag.tag_name) {
       throw Error("Require a tag name")
     }
@@ -637,6 +701,13 @@ module.exports = async function() {
   //Create
   //POST /api/categories
   async function createCategory({category_name, resource}) {
+    const category = await categories.findOne({
+      $and: [{category_name: category_name}, {resource: resource}]
+    })
+    if (category) {
+      throw Error("Category already exist in this resource group")
+    }
+
     if (!category_name) {
       throw Error("Require a category name")
     }
@@ -673,6 +744,15 @@ module.exports = async function() {
   //Update
   //PUT /api/categories/:categoryId
   async function updateCategory({categoryId, updatedCategory}) {
+    const category = await categories.findOne({
+      $and: [{category_name: updatedCategory.category_name}, {resource: updatedCategory.resource}]
+    })
+    if (category) {
+      if (category._id != categoryId) {
+        throw Error("Category already exist in this resource group")
+      }
+    }
+
     if (!updatedCategory.category_name) {
       throw Error("Require a category name")
     }
