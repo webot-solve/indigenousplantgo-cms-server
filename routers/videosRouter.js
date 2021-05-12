@@ -1,11 +1,11 @@
 const express = require('express')
 
-module.exports = function({database, authorize, verifyKey, upload, s3}) {
+module.exports = function({database, authorize, upload, s3}) {
   const router = express.Router()
 
   //Get All
   //GET /api/videos?key=<API_KEY>
-  router.get('/', verifyKey, async (req, res) => {
+  router.get('/', async (req, res) => {
     try {
       const result = await database.getVideos()
       res.send(result)
@@ -29,7 +29,7 @@ module.exports = function({database, authorize, verifyKey, upload, s3}) {
 
   //Get One
   //GET /api/videos/:videoId?key=<API_KEY>
-  router.get('/:videoId', verifyKey, async (req, res) => {
+  router.get('/:videoId', async (req, res) => {
     try {
       const videoId = req.params.videoId
       const result = await database.getVideo({videoId})

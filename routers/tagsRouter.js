@@ -1,11 +1,11 @@
 const express = require('express')
 
-module.exports = function({database, authorize, verifyKey}) {
+module.exports = function({database, authorize}) {
   const router = express.Router()
 
   //Get All
   //GET /api/tags?key=<API_KEY>
-  router.get('/', verifyKey, async (req, res) => {
+  router.get('/', async (req, res) => {
     try {
       const result = await database.getTags()
       res.send(result)
@@ -29,7 +29,7 @@ module.exports = function({database, authorize, verifyKey}) {
 
   //Get One
   //GET /api/tags/:tagId?key=<API_KEY>
-  router.get('/:tagId', verifyKey, async (req, res) => {
+  router.get('/:tagId', async (req, res) => {
     try {
       const tagId = req.params.tagId
       const result = await database.getTag({tagId})

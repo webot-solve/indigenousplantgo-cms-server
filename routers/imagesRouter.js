@@ -1,11 +1,11 @@
 const express = require('express')
 
-module.exports = function({database, authorize, verifyKey, upload, s3}) {
+module.exports = function({database, authorize, upload, s3}) {
   const router = express.Router()
 
   //Get All
   //GET /api/images?key=<API_KEY>
-  router.get('/', verifyKey, async (req, res) => {
+  router.get('/', async (req, res) => {
     try {
       const result = await database.getImages()
       res.send(result)
@@ -30,7 +30,7 @@ module.exports = function({database, authorize, verifyKey, upload, s3}) {
 
   //Get One
   //GET /api/images/:imageId?key=<API_KEY>
-  router.get('/:imageId', verifyKey, async (req, res) => {
+  router.get('/:imageId', async (req, res) => {
     try {
       const imageId = req.params.imageId
       const result = await database.getImage({imageId})

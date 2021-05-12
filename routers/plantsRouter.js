@@ -1,11 +1,11 @@
 const express = require('express')
 
-module.exports = function({database, authorize, verifyKey}) {
+module.exports = function({database, authorize}) {
   const router = express.Router()
 
   //Get All (published ones)
   //GET /api/plants?key=<API_KEY>
-  router.get('/', verifyKey, async (req, res) => {
+  router.get('/', async (req, res) => {
     try {
       const result = await database.getPublishedPlants()
       res.send(result)
@@ -17,7 +17,7 @@ module.exports = function({database, authorize, verifyKey}) {
 
   //Get All plants include none published ones
   //GET /api/plants/all?key=<API_KEY>
-  router.get('/all', verifyKey, async (req, res) => {
+  router.get('/all', async (req, res) => {
     try {
       const result = await database.getPlants()
       res.send(result)
@@ -41,7 +41,7 @@ module.exports = function({database, authorize, verifyKey}) {
 
   //Get One
   //GET /api/plants/:plantId?key=<API_KEY>
-  router.get('/:plantId', verifyKey, async (req, res) => {
+  router.get('/:plantId', async (req, res) => {
     try {
       const plantId = req.params.plantId
       const result = await database.getPlant({plantId})

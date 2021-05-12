@@ -1,11 +1,11 @@
 const express = require('express')
 
-module.exports = function({database, authorize, verifyKey}) {
+module.exports = function({database, authorize}) {
   const router = express.Router()
 
   //Get All
   //GET /api/learn_more?key=<API_KEY>
-  router.get('/', verifyKey, async (req, res) => {
+  router.get('/', async (req, res) => {
     try {
       const result = await database.getLearnMores()
       res.send(result)
@@ -29,7 +29,7 @@ module.exports = function({database, authorize, verifyKey}) {
 
   //Get One
   //GET /api/learn_more/:learnMoreId?key=<API_KEY>
-  router.get('/:learnMoreId', verifyKey, async (req, res) => {
+  router.get('/:learnMoreId', async (req, res) => {
     try {
       const learnMoreId = req.params.learnMoreId
       const result = await database.getLearnMore({learnMoreId})
