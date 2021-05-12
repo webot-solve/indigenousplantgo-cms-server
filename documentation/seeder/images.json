@@ -1,0 +1,12 @@
+[
+  {
+    "_id": {"$oid":"604fd564d42766b77839a300"},
+    "image_url": "s3.aws.indigenousplantgo.com/images/lavender-1.jpg",
+    "caption": "lavender"
+  },
+  {
+    "_id": {"$oid":"604fd57ad42766b77839a301"} ,
+    "image_url": "s3.aws.indigenousplantgo.com/images/kinnikinnickl-1.jpg",
+    "caption": "kinnikinnick"
+  }
+]

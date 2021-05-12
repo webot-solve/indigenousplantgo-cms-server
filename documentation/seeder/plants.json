@@ -1,0 +1,67 @@
+[
+  {
+    "_id": {
+      "$oid": "6081b447fc13ae6e380004f3"
+    },
+    "plant_name": "lavender",
+    "scientific_name": "lavandula",
+    "location": [
+      {"$oid":"6050158f67977f456fa5fe49"}
+    ],
+    "description": "Lavender is a perennial shrub with purple flowers that bloom during the summer",
+    "custom_fields": [
+      {"$oid":"6050ea4845e8e4132f0f61da"}
+    ],
+    "images": [
+      {"$oid":"604fd564d42766b77839a300"}
+    ],
+    "audio_files": [
+      {"$oid":"605024fc67977f456fa5fe4d"}
+    ],
+    "videos": [
+      {"$oid":"6050ed9e45e8e4132f0f61db"}
+    ],
+    "tags": [
+      {"$oid":"6050211267977f456fa5fe4b"}
+    ],
+    "categories": [
+      {"$oid": "6081b2eafc13ae5d39000154"}
+    ],
+    "revision_history": [
+      {"$oid": "6081b447fc13ae6e380004ee"}
+    ]
+  },
+  {
+    "_id": {
+      "$oid": "6081b447fc13ae6e380004f4"
+    },
+    "plant_name": "kinnikinnick",
+    "scientific_name": "arctostaphylos uva-ursi",
+    "location": [
+      {"$oid":"6050158f67977f456fa5fe49"}
+    ],
+    "description": "Kinnikinnick is an evergreen ground cover. It has small white or pink flowers that typically bloom in May and June, and red berries later in the season. Kinnikinnick attracts butterflies and other pollinators. It’s a food source for wildlife all year round. "
+    ,
+    "custom_fields": [
+      {"$oid":"6050158f67977f456fa5fe49"}
+    ],
+    "images": [
+      {"$oid":"604fd57ad42766b77839a301"}
+    ],
+    "audio_files": [
+      {"$oid":"60501009d42766b77839a302"}
+    ],
+    "videos": [
+      {"$oid":"605022f567977f456fa5fe4c"}
+    ],
+    "tags": [
+      {"$oid":"6050ea4845e8e4132f0f61da"}
+    ],
+    "categories": [
+      {"$oid": "6081b2eafc13ae5d39000155"}
+    ],
+    "revision_history": [
+      {"$oid": "6081b447fc13ae6e380004ef"}
+    ]
+  }
+]
