@@ -1,0 +1,11 @@
+[
+  {
+    "_id": {"$oid":"6050211267977f456fa5fe4b"},
+    "tag_name": "healing"
+  },
+  {
+    "_id": {"$oid":"6050ea4845e8e4132f0f61da"},
+    "tag_name": "protective"
+  }
+
+]
