@@ -1,6 +1,6 @@
 const express = require('express')
 
-module.exports = function({database, authorize, generateToken, verifyKey}) {
+module.exports = function({database, authorize, generateToken}) {
   const router = express.Router()
 
   //Get All

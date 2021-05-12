@@ -1,11 +1,11 @@
 const express = require('express')
 
-module.exports = function({database, authorize, verifyKey}) {
+module.exports = function({database, authorize}) {
   const router = express.Router()
 
   //Get All
   //GET /api/categories?key=<API_KEY>
-  router.get('/', verifyKey, async (req, res) => {
+  router.get('/', async (req, res) => {
     try {
       const result = await database.getCategories()
       res.send(result)
@@ -16,8 +16,8 @@ module.exports = function({database, authorize, verifyKey}) {
   })
 
   //Create
-  //POST /api/categories?key=<API_KEY>
-  router.post('/', authorize, verifyKey, async (req, res) => {
+  //POST /api/categories
+  router.post('/', authorize, async (req, res) => {
     try {
       const result = await database.createCategory(req.body)
       res.send(result.ops[0])
@@ -29,7 +29,7 @@ module.exports = function({database, authorize, verifyKey}) {
 
   //Get One
   //GET /api/categories/:categoryId?key=<API_KEY>
-  router.get('/:categoryId', verifyKey, async (req, res) => {
+  router.get('/:categoryId', async (req, res) => {
     try {
       const categoryId = req.params.categoryId
       const result = await database.getCategory({categoryId})
@@ -41,8 +41,8 @@ module.exports = function({database, authorize, verifyKey}) {
   })
 
   //Update
-  //PUT /api/categories/:categoryId?key=<API_KEY>
-  router.put('/:categoryId', authorize, verifyKey, async (req, res) => {
+  //PUT /api/categories/:categoryId
+  router.put('/:categoryId', authorize, async (req, res) => {
     try {
       const categoryId = req.params.categoryId
       const result = await database.updateCategory({categoryId, updatedCategory: req.body})
@@ -54,8 +54,8 @@ module.exports = function({database, authorize, verifyKey}) {
   })
 
   //Delete
-  //DELETE /api/categories/:categoryId?key=<API_KEY>
-  router.delete('/:categoryId', authorize, verifyKey, async (req, res) => {
+  //DELETE /api/categories/:categoryId
+  router.delete('/:categoryId', authorize, async (req, res) => {
     try {
       const categoryId = req.params.categoryId
       const result = await database.deleteCategory({categoryId})
@@ -68,7 +68,7 @@ module.exports = function({database, authorize, verifyKey}) {
 
   //Get base on resource
   //GET /api/categories/group/:group?key=<API_KEY>
-  router.get('/group/:group', verifyKey, async (req, res) => {
+  router.get('/group/:group', async (req, res) => {
     try {
       const group = req.params.group
       const result = await database.getCategoryGroup({group})

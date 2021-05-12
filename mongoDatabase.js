@@ -160,12 +160,10 @@ module.exports = async function() {
       }
     }
 
-    if (!updatedUser.password) {
-      throw Error("Requires a password")
-    }
-
-    if (!(typeof updatedUser.password === 'string' || updatedUser.password instanceof String)) {
-      throw Error("Invalid input for password")
+    if (updatedUser.password !== null) {
+      if (!(typeof updatedUser.password === 'string' || updatedUser.password instanceof String)) {
+        throw Error("Invalid input for password")
+      }
     }
 
     //Hash password
@@ -790,7 +788,7 @@ module.exports = async function() {
   }
 
   //Get base on resource
-  //GET /api/categories/group/:group?key=<API_KEY>
+  //GET /api/categories/group/:group
   async function getCategoryGroup({group}) {
     return await categories.find({resource: group}).toArray()
   }

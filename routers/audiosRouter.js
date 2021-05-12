@@ -1,11 +1,11 @@
 const express = require('express')
 
-module.exports = function({database, authorize, verifyKey, upload, s3}) {
+module.exports = function({database, authorize, upload, s3}) {
   const router = express.Router()
 
   //Get All
-  //GET /api/audios?key=<API_KEY>
-  router.get('/', verifyKey, async (req, res) => {
+  //GET /api/audios
+  router.get('/', async (req, res) => {
     try {
       const result = await database.getAudios()
       res.send(result)
@@ -16,8 +16,8 @@ module.exports = function({database, authorize, verifyKey, upload, s3}) {
   })
 
   //Create
-  //POST /api/audios?key=<API_KEY>
-  router.post('/', authorize, verifyKey, upload.single('audio'), async (req, res) => {
+  //POST /api/audios
+  router.post('/', authorize, upload.single('audio'), async (req, res) => {
     try {
       const url = req.file ? req.file.location : null
       const result = await database.createAudio({url: url, newAudio: req.body})
@@ -29,8 +29,8 @@ module.exports = function({database, authorize, verifyKey, upload, s3}) {
   })
 
   //Get One
-  //GET /api/audios/:audioId?key=<API_KEY>
-  router.get('/:audioId', verifyKey, async (req, res) => {
+  //GET /api/audios/:audioId
+  router.get('/:audioId', async (req, res) => {
     try {
       const audioId = req.params.audioId
       const result = await database.getAudio({audioId})
@@ -42,8 +42,8 @@ module.exports = function({database, authorize, verifyKey, upload, s3}) {
   })
 
   //Update
-  //PUT /api/audios/:audioId?key=<API_KEY>
-  router.put('/:audioId', authorize, verifyKey, upload.single('audio'), async (req, res) => {
+  //PUT /api/audios/:audioId
+  router.put('/:audioId', authorize, upload.single('audio'), async (req, res) => {
     try {
       const url = req.file ? req.file.location : null
       const audioId = req.params.audioId
@@ -56,8 +56,8 @@ module.exports = function({database, authorize, verifyKey, upload, s3}) {
   })
 
   //Delete
-  //DELETE /api/audios/:audioId?key=<API_KEY>
-  router.delete('/:audioId', authorize, verifyKey, async (req, res) => {
+  //DELETE /api/audios/:audioId
+  router.delete('/:audioId', authorize, async (req, res) => {
     try {
       const audioId = req.params.audioId
       const result = await database.deleteAudio({audioId, s3})

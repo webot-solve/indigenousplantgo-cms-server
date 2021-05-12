@@ -1,11 +1,11 @@
 const express = require('express')
 
-module.exports = function({database, authorize, verifyKey}) {
+module.exports = function({database, authorize}) {
   const router = express.Router()
 
   //Get All
   //GET /api/locations?key=<API_KEY>
-  router.get('/', verifyKey, async (req, res) => {
+  router.get('/', async (req, res) => {
     try {
       const result = await database.getLocations()
       res.send(result)
@@ -16,8 +16,8 @@ module.exports = function({database, authorize, verifyKey}) {
   })
 
   //Create
-  //POST /api/locations?key=<API_KEY>
-  router.post('/', authorize, verifyKey, async (req, res) => {
+  //POST /api/locations
+  router.post('/', authorize, async (req, res) => {
     try {
       const result = await database.createLocation(req.body)
       res.send(result.ops[0])
@@ -29,7 +29,7 @@ module.exports = function({database, authorize, verifyKey}) {
 
   //Get One
   //GET /api/locations/:locationId?key=<API_KEY>
-  router.get('/:locationId', verifyKey, async (req, res) => {
+  router.get('/:locationId', async (req, res) => {
     try {
       const locationId = req.params.locationId
       const result = await database.getLocation({locationId})
@@ -41,8 +41,8 @@ module.exports = function({database, authorize, verifyKey}) {
   })
 
   //Update
-  //PUT /api/locations/:locationId?key=<API_KEY>
-  router.put('/:locationId', authorize, verifyKey, async (req, res) => {
+  //PUT /api/locations/:locationId
+  router.put('/:locationId', authorize, async (req, res) => {
     try {
       const locationId = req.params.locationId
       const result = await database.updateLocation({locationId, updatedLocation: req.body})
@@ -54,8 +54,8 @@ module.exports = function({database, authorize, verifyKey}) {
   })
 
   //Delete
-  //DELETE /api/locations/:locationId?key=<API_KEY>
-  router.delete('/:locationId', authorize, verifyKey, async (req, res) => {
+  //DELETE /api/locations/:locationId
+  router.delete('/:locationId', authorize, async (req, res) => {
     try {
       const locationId = req.params.locationId
       const result = await database.deleteLocation({locationId})

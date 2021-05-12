@@ -1,11 +1,11 @@
 const express = require('express')
 
-module.exports = function({database, authorize, verifyKey}) {
+module.exports = function({database, authorize}) {
   const router = express.Router()
 
   //Get All
   //GET /api/tours?key=<API_KEY>
-  router.get('/', verifyKey, async (req, res) => {
+  router.get('/', async (req, res) => {
     try {
       const result = await database.getTours()
       res.send(result)
@@ -16,8 +16,8 @@ module.exports = function({database, authorize, verifyKey}) {
   })
 
   //Create
-  //POST /api/tours?key=<API_KEY>
-  router.post('/', authorize, verifyKey, async (req, res) => {
+  //POST /api/tours
+  router.post('/', authorize, async (req, res) => {
     try {
       const result = await database.createTour({newTour: req.body, user_id: req.user._id})
       res.send("Tour added")
@@ -29,7 +29,7 @@ module.exports = function({database, authorize, verifyKey}) {
 
   //Get One
   //GET /api/tours/:tourId?key=<API_KEY>
-  router.get('/:tourId', verifyKey, async (req, res) => {
+  router.get('/:tourId', async (req, res) => {
     try {
       const tourId = req.params.tourId
       const result = await database.getTour({tourId})
@@ -41,8 +41,8 @@ module.exports = function({database, authorize, verifyKey}) {
   })
 
   //Update
-  //PUT /api/tours/:tourId?key=<API_KEY>
-  router.put('/:tourId', authorize, verifyKey, async (req, res) => {
+  //PUT /api/tours/:tourId
+  router.put('/:tourId', authorize, async (req, res) => {
     try {
       const tourId = req.params.tourId
       const result = await database.updateTour({tourId, updatedTour: req.body, user_id: req.user._id})
@@ -54,8 +54,8 @@ module.exports = function({database, authorize, verifyKey}) {
   })
 
   //Delete
-  //DELETE /api/tours/:tourId?key=<API_KEY>
-  router.delete('/:tourId', authorize, verifyKey, async (req, res) => {
+  //DELETE /api/tours/:tourId
+  router.delete('/:tourId', authorize, async (req, res) => {
     try {
       const tourId = req.params.tourId
       const result = await database.deleteTour({tourId})

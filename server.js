@@ -2,7 +2,6 @@ const express = require('express')
 const cors = require('cors')
 const mongoDatabase = require('./mongoDatabase')
 const jwt = require('./jwt')
-const apikey = require('./apikey')
 const multer = require('multer')
 const multerS3 = require('multer-s3')
 const S3 = require('aws-sdk/clients/s3')
@@ -51,43 +50,43 @@ const storage = multerS3({
 const upload = multer({storage: storage})
 
 mongoDatabase().then((database) => {
-  const usersRouter = makeUsersRouter({database, authorize: jwt.authorize, generateToken: jwt.generateToken, verifyKey: apikey.verifyKey})
+  const usersRouter = makeUsersRouter({database, authorize: jwt.authorize, generateToken: jwt.generateToken})
   app.use('/api/users', usersRouter)
 
   const pingRouter = makePingRouter({authorize: jwt.authorize})
   app.use('/api/ping', pingRouter)
 
-  const imagesRouter = makeImagesRouter({database, authorize: jwt.authorize, verifyKey: apikey.verifyKey, upload: upload, s3: s3})
+  const imagesRouter = makeImagesRouter({database, authorize: jwt.authorize, upload: upload, s3: s3})
   app.use('/api/images', imagesRouter)
 
-  const audiosRouter = makeAudiosRouter({database, authorize: jwt.authorize, verifyKey: apikey.verifyKey, upload: upload, s3: s3})
+  const audiosRouter = makeAudiosRouter({database, authorize: jwt.authorize, upload: upload, s3: s3})
   app.use('/api/audios', audiosRouter)
 
-  const videosRouter = makeVideosRouter({database, authorize: jwt.authorize, verifyKey: apikey.verifyKey, upload: upload, s3: s3})
+  const videosRouter = makeVideosRouter({database, authorize: jwt.authorize, upload: upload, s3: s3})
   app.use('/api/videos', videosRouter)
 
-  const tagsRouter = makeTagsRouter({database, authorize: jwt.authorize, verifyKey: apikey.verifyKey})
+  const tagsRouter = makeTagsRouter({database, authorize: jwt.authorize})
   app.use('/api/tags', tagsRouter)
 
-  const categoriesRouter = makeCategoriesRouter({database, authorize: jwt.authorize, verifyKey: apikey.verifyKey})
+  const categoriesRouter = makeCategoriesRouter({database, authorize: jwt.authorize})
   app.use('/api/categories', categoriesRouter)
 
-  const locationsRouter = makeLocationsRouter({database, authorize: jwt.authorize, verifyKey: apikey.verifyKey})
+  const locationsRouter = makeLocationsRouter({database, authorize: jwt.authorize})
   app.use('/api/locations', locationsRouter)
 
-  const revisionsRouter = makeRevisionsRouter({database, authorize: jwt.authorize, verifyKey: apikey.verifyKey})
+  const revisionsRouter = makeRevisionsRouter({database, authorize: jwt.authorize})
   app.use('/api/revisions', revisionsRouter)
 
-  const plantsRouter = makePlantsRouter({database, authorize: jwt.authorize, verifyKey: apikey.verifyKey})
+  const plantsRouter = makePlantsRouter({database, authorize: jwt.authorize})
   app.use('/api/plants', plantsRouter)
 
-  const waypointsRouter = makeWaypointsRouter({database, authorize: jwt.authorize, verifyKey: apikey.verifyKey})
+  const waypointsRouter = makeWaypointsRouter({database, authorize: jwt.authorize})
   app.use('/api/waypoints', waypointsRouter)
 
-  const toursRouter = makeToursRouter({database, authorize: jwt.authorize, verifyKey: apikey.verifyKey})
+  const toursRouter = makeToursRouter({database, authorize: jwt.authorize})
   app.use('/api/tours', toursRouter)
 
-  const learnMoreRouter = makeLearnMoreRouter({database, authorize: jwt.authorize, verifyKey: apikey.verifyKey})
+  const learnMoreRouter = makeLearnMoreRouter({database, authorize: jwt.authorize})
   app.use('/api/learn_more', learnMoreRouter)
 })
 
