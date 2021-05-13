@@ -30,6 +30,11 @@ This specific repository houses the server-side functions of the mobile applicat
 * Videos will be uploaded exclusively via youtube link.
 * PERMISSIONS are currently not implemented.
 
+#### Road-mapped Features
+* Programmatic database backups stored to S3
+* Allow input for QR code data on a plant and/or waypoint resource
+* Implement (2) more resource types: "tours", and "learn more"
+
 ### Technology Stack
 * Database: MongoDB Cloud
 * Server: NodeJS, express
