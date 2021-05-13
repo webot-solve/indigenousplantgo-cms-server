@@ -55,11 +55,11 @@ cd indigenousplantgo-cms-server
 ```
 2. Install all the node module with `npm install`.
 3. Few things related to .env file needs to be set up:
-  1. To run this locally you will need to set up a S3, see [S3 doc](./documentation/s3/README.md) for how to set that up.
-  2. To run this locally you will need to set up mongoDb, if you have mongo shell and stuff you can just set `MONGO_DB_URL=mongodb://localhost:27017/<Your Db name>` in .env file. For mongoDb atlas set up, see [MongoDb Atlas doc](./documentation/mongoDb/README.md).
-    - This also includes a seeder to fill the database with sample data, see [Seeder doc](./documentation/seeder/README.md) for how to use the seeder.
-  3. One more thing to set up in .env file is sender email for recovering password.
-    - For gmail you do need to have less secure app access on
+    1. To run this locally you will need to set up a S3, see [S3 doc](./documentation/s3/README.md) for how to set that up.
+    2. To run this locally you will need to set up mongoDb, if you have mongo shell and stuff you can just set `MONGO_DB_URL=mongodb://localhost:27017/<Your Db name>` in .env file. For mongoDb atlas set up, see [MongoDb Atlas doc](./documentation/mongoDb/README.md).
+        - This also includes a seeder to fill the database with sample data, see [Seeder doc](./documentation/seeder/README.md) for how to use the seeder.
+    3. One more thing to set up in .env file is sender email for recovering password.
+        - For gmail you do need to have less secure app access on
 Final .env file should have the following field: 
 ```
 MONGO_DB_URL=<Your mongo_db url>
@@ -72,12 +72,12 @@ SENDER_PASSWORD=<Your password for the email above>
 ```
 4. Running `npm start` now should run the api stuff at `http://localhost:8080`, for the routes see [All route docs](./documentation/api) for all the routes.
 #### To deploy to heroku (using heroku cli)
-1. Set up the app on heroku site and download heroku cli, typing heroku --version in your terminal to check if you install heroku cli correctly.
+1. Set up the app on heroku site and download heroku cli, typing heroku --version in your terminal to check if you install heroku cli correctly. 
 2. Add add the heroku git url as a remote to this repo (you can get this from the setting from the app you set up on heroku site) and push to heroku.
 ```
 git add remote heroku <Your heroku git url>
 git push heroku master
 ```
 3. You also need to set up s3 and mongoDb separately, but you put the variable that is suppose to go in .env file into config vars in heroku app's setting, see above to run locally step 2 to see what environmental variables are required.
-  - An extra variable you can add is ACCESS_TOKEN_SECRET to separate the jwt token generated from your local with ones generated from your deployed app, the secret can be anything you want.
+    - An extra variable you can add is ACCESS_TOKEN_SECRET to separate the jwt token generated from your local with ones generated from your deployed app, the secret can be anything you want.
 4. Once you set up all the environmental variables in config vars on heroku, you should be able to run it on your deployed domain, route still follow those in [All route docs](./documentation/api).
