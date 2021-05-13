@@ -6,7 +6,8 @@ Indigenous Plant Go is a mobile application that allows BCIT Students to explore
 2. [Application Features](#application-features)
 3. [Technology Stack](#technology-stack)
 4. [Entity Relationship Diagram (ERD)](#entity-relationship-diagram)
-5. [Installation Documents](#installation)
+5. [Road-mapped Features](#road-mapped-features)
+6. [Installation Documents](#installation)
 
 ### Content Management System (Server)
 This specific repository houses the server-side functions of the mobile application's content management system (cms).
