@@ -1,8 +1,12 @@
 ## Implementation
-
-### Go to terminal: 
-
-mongoimport --jsonArray --db <i><b>databaseName</b></i> --collection <i><b>nameOfCollection</b></i> --file <i><b>filePath</b></i>
-
-example: 
-mongoimport --jsonArray --db indigenousPlant --collection plants  --file /Users/industry_project/indigenous-plant-go-cms/planning/server/seeder/plants.json
+### Run Seeder
+1. Go to folder /database/seederDeploy
+2. Add .env file and place:
+```
+MONGO_DB_URL = <--MongoDB URL Connection in cluster-->
+MONGO_DB_NAME = <--DatabaseName-->
+```
+3. On the terminal, enter the command
+```
+node seederBackup.js or node <--name of seeder file-->
+```
