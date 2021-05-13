@@ -59,6 +59,7 @@ cd indigenousplantgo-cms-server
   2. To run this locally you will need to set up mongoDb, if you have mongo shell and stuff you can just set `MONGO_DB_URL=mongodb://localhost:27017/<Your Db name>` in .env file. For mongoDb atlas set up, see [MongoDb Atlas doc](./documentation/mongoDb/README.md).
     - This also includes a seeder to fill the database with sample data, see [Seeder doc](./documentation/seeder/README.md) for how to use the seeder.
   3. One more thing to set up in .env file is sender email for recovering password.
+    - For gmail you do need to have less secure app access on
 Final .env file should have the following field: 
 ```
 MONGO_DB_URL=<Your mongo_db url>
