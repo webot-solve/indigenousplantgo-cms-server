@@ -72,7 +72,7 @@ SENDER_PASSWORD=<Your password for the email above>
 ```
 4. Running `npm start` now should run the api stuff at `http://localhost:8080`, for the routes see [All route docs](./documentation/api) for all the routes.
 #### To deploy to heroku (using heroku cli)
-1. Set up the app on heroku site and download heroku cli, typing heroku --version in your terminal to check if you install heroku cli correctly.
+1. Set up the app on heroku site and download heroku cli, typing heroku --version in your terminal to check if you install heroku cli correctly. 
 2. Add add the heroku git url as a remote to this repo (you can get this from the setting from the app you set up on heroku site) and push to heroku.
 ```
 git add remote heroku <Your heroku git url>
