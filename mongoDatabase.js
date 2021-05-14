@@ -1041,7 +1041,15 @@ module.exports = async function() {
       }
     ]
 
-    return await plants.aggregate(aggregateOptions).toArray()
+    const tempPlants = await plants.aggregate(aggregateOptions).toArray()
+
+    tempPlants.forEach((plant, index, self) => {
+      if (!plant.revision_history[0]._id) {
+        self[index].revision_history = []
+      }
+    })
+
+    return tempPlants
   }
 
   //Get All published plants
@@ -1154,7 +1162,15 @@ module.exports = async function() {
       }
     ]
 
-    return await plants.aggregate(aggregateOptions).toArray()
+    const tempPlants = await plants.aggregate(aggregateOptions).toArray()
+
+    tempPlants.forEach((plant, index, self) => {
+      if (!plant.revision_history[0]._id) {
+        self[index].revision_history = []
+      }
+    })
+
+    return tempPlants
   }
 
   //Create
@@ -1445,7 +1461,13 @@ module.exports = async function() {
       }
     ]
 
-    return await plants.aggregate(aggregateOptions).next()
+    const tempPlant = await plants.aggregate(aggregateOptions).next()
+
+    if (!tempPlant.revision_history[0]._id) {
+      tempPlant.revision_history = []
+    }
+
+    return tempPlant
   }
 
   //Update
@@ -1842,6 +1864,10 @@ module.exports = async function() {
       if (!waypoint.plants[0]._id) {
         self[index].plants = []
       }
+
+      if (!waypoint.revision_history[0]._id) {
+        self[index].revision_history = []
+      }
     })
 
     return tempWaypoints
@@ -2058,6 +2084,10 @@ module.exports = async function() {
     tempWaypoints.forEach((waypoint, index, self) => {
       if (!waypoint.plants[0]._id) {
         self[index].plants = []
+      }
+
+      if (!waypoint.revision_history[0]._id) {
+        self[index].revision_history = []
       }
     })
 
@@ -2458,6 +2488,10 @@ module.exports = async function() {
 
     if (!tempWaypoint.plants[0]._id) {
       tempWaypoint.plants = []
+    }
+
+    if (!tempWaypoint.revision_history[0]._id) {
+      tempWaypoint.revision_history = []
     }
 
     return tempWaypoint
