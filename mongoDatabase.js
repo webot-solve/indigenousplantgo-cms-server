@@ -154,13 +154,11 @@ module.exports = async function() {
       throw Error("Requires an user name")
     }
 
-    if (updatedUser.user_name) {
-      if (!(typeof updatedUser.user_name === 'string' || updatedUser.user_name instanceof String)) {
-        throw Error("Invalid input for user_name")
-      }
+    if (!(typeof updatedUser.user_name === 'string' || updatedUser.user_name instanceof String)) {
+      throw Error("Invalid input for user_name")
     }
 
-    if (updatedUser.password !== null) {
+    if (updatedUser.password != null) {
       if (!(typeof updatedUser.password === 'string' || updatedUser.password instanceof String)) {
         throw Error("Invalid input for password")
       }
