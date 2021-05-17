@@ -1,0 +1,16 @@
+[
+  { 
+    "_id": {"$oid":"6050158f67977f456fa5fe49"},
+    "location_name": "SW1",
+    "latitude": 49.251508,
+    "longitude": -123.003891,
+    "description": "infront of SW1"
+  },
+  {
+    "_id": {"$oid":"6050211267977f456fa5fe4b"} ,
+    "location_name": "SW2",
+    "latitude": 49.2516282,
+    "longitude": -123.0003427,
+    "description": "infront of SW2"
+  }
+]

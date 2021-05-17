@@ -1,0 +1,15 @@
+[
+  {    
+    "_id" : {"$oid":"604fd5351a6e6eae57f1c9ac"},    
+      "username" : "bob",    
+      "password" : "$2y$08$2pRScE9X7Jz8M0Ij7u5LCehFaBt5IePug7HGUBEuRONVH76zCvMtK",    
+      "email" : "bob@test.com",    
+      "role" : "Admin"
+  },
+  {    "_id" : {"$oid":"604fd5351a6e6eae57f1c9ad"},    
+      "username" : "charlie",    
+      "password" : "$2y$08$2pRScE9X7Jz8M0Ij7u5LCehFaBt5IePug7HGUBEuRONVH76zCvMtK",    
+      "email" : "charlie@test.com",    
+      "role" : "Manager"
+  }
+]
