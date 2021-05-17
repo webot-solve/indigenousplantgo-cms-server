@@ -158,15 +158,17 @@ module.exports = async function() {
       throw Error("Invalid input for user_name")
     }
 
+    console.log(updatedUser)
+
     if (updatedUser.password != null) {
       if (!(typeof updatedUser.password === 'string' || updatedUser.password instanceof String)) {
         throw Error("Invalid input for password")
       }
-    }
 
-    //Hash password
-    const encrypted = await bcrypt.hash(updatedUser.password, 12)
-    updatedUser.password = encrypted
+      //Hash password
+      const encrypted = await bcrypt.hash(updatedUser.password, 12)
+      updatedUser.password = encrypted
+    }
     
     if (updatedUser.role) {
       if (userRole !== "Admin") {
