@@ -158,8 +158,6 @@ module.exports = async function() {
       throw Error("Invalid input for user_name")
     }
 
-    console.log(updatedUser)
-
     if (updatedUser.password != null) {
       if (!(typeof updatedUser.password === 'string' || updatedUser.password instanceof String)) {
         throw Error("Invalid input for password")
