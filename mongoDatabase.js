@@ -3,7 +3,9 @@ const bcrypt = require('bcryptjs')
 require('dotenv').config()
 const nodemailer = require('nodemailer')
 
-const url = process.env.MONGO_DB_URL
+//  const url = process.env.MONGO_DB_URL
+const url = process.env.MONGO_DB_URL_DEV
+
 const client = new MongoClient(url, {useUnifiedTopology: true, useNewUrlParser: true})
 
 module.exports = async function() {
