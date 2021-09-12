@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs')
 require('dotenv').config()
 const nodemailer = require('nodemailer')
 
-//  const url = process.env.MONGO_DB_URL
+// const url = process.env.MONGO_DB_URL
 // TEMPORARY
 const url = process.env.MONGO_DB_URL_DEV
 
@@ -3924,7 +3924,9 @@ module.exports = async function() {
           tags: {$first: '$tags'},
           categories: {$first: '$categories'},
           custom_fields: {$first: '$custom_fields'},
-          revision_history: {$addToSet: '$revision_history'}
+          revision_history: {$addToSet: '$revision_history'},
+          isPublish:{$first: '$isPublish'}
+          
         }
       },
       {
