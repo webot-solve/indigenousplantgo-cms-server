@@ -3561,33 +3561,33 @@ module.exports = async function() {
       //   }
       // },
       //Waypoint Revision
-      {
-        $lookup: {
-          from: 'revisions',
-          localField: 'waypoints.revision_history',
-          foreignField: '_id',
-          as: 'waypoints.revision_history'
-        }
-      },
-      {
-        $unwind: {
-          path: '$waypoints.revision_history',
-          preserveNullAndEmptyArrays: true
-        }
-      },
-      {
-        $sort: {
-          'waypoints.revision_history.date': -1
-        }
-      },
-      {
-        $lookup: {
-          from: 'users',
-          localField: 'waypoints.revision_history.user',
-          foreignField: '_id',
-          as: 'waypoints.revision_history.user'
-        }
-      },
+      // {
+      //   $lookup: {
+      //     from: 'revisions',
+      //     localField: 'waypoints.revision_history',
+      //     foreignField: '_id',
+      //     as: 'waypoints.revision_history'
+      //   }
+      // },
+      // {
+      //   $unwind: {
+      //     path: '$waypoints.revision_history',
+      //     preserveNullAndEmptyArrays: true
+      //   }
+      // },
+      // {
+      //   $sort: {
+      //     'waypoints.revision_history.date': -1
+      //   }
+      // },
+      // {
+      //   $lookup: {
+      //     from: 'users',
+      //     localField: 'waypoints.revision_history.user',
+      //     foreignField: '_id',
+      //     as: 'waypoints.revision_history.user'
+      //   }
+      // },
       //Revision
       {
         $lookup: {
@@ -3636,10 +3636,10 @@ module.exports = async function() {
         $project: {
           'plants.revision_history.user.password': 0,
           'plants.revision_history.user.role': 0,
-          'waypoints.plants.revision_history.user.password': 0,
-          'waypoints.plants.revision_history.user.role': 0,
-          'waypoints.revision_history.user.password': 0,
-          'waypoints.revision_history.user.role': 0,
+          // 'waypoints.plants.revision_history.user.password': 0,
+          // 'waypoints.plants.revision_history.user.role': 0,
+          // 'waypoints.revision_history.user.password': 0,
+          // 'waypoints.revision_history.user.role': 0,
           'revision_history.user.password': 0,
           'revision_history.user.role': 0,
           root: 0
@@ -3648,6 +3648,7 @@ module.exports = async function() {
     ]
 
     const tempTour = await tours.aggregate(aggregateOptions).next()
+    console.log(tempTour)
 
     if (!tempTour.plants[0]._id) {
       tempTour.plants = []
